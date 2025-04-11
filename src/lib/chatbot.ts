@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import { ChatCompletionMessageParam } from 'openai/resources';
 import { findUserById } from './user-db';
 
 // Initialize OpenAI client
@@ -43,7 +44,7 @@ const healthCategories = {
 };
 
 // In-memory storage for user conversation history (in a real app, use a database)
-const userConversationHistory: Record<string, Array<{role: string, content: string}>> = {};
+const userConversationHistory: Record<string, Array<ChatCompletionMessageParam>> = {};
 
 /**
  * Process a healthcare-related query and return a response
@@ -53,7 +54,7 @@ export async function processHealthcareQuery(query: string, userId?: string | nu
   const lowerQuery = query.toLowerCase();
   
   // Get or initialize user conversation history
-  let conversationHistory: Array<{role: string, content: string}> = [];
+  let conversationHistory: Array<ChatCompletionMessageParam> = [];
   if (userId) {
     if (!userConversationHistory[userId]) {
       userConversationHistory[userId] = [];
@@ -97,7 +98,7 @@ export async function processHealthcareQuery(query: string, userId?: string | nu
       }
       
       // Create messages array starting with the system prompt
-      const messages = [
+      const messages: ChatCompletionMessageParam[] = [
         {
           role: "system",
           content: `You are a helpful healthcare assistant. Provide informative but cautious health information, always encouraging proper medical consultation for serious concerns. Never diagnose or prescribe. Include appropriate disclaimers when necessary.${userName ? ` You are talking to ${userName}.` : ''}`
