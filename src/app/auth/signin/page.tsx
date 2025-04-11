@@ -1,19 +1,20 @@
-'use client';
+import SignInForm from '@/components/auth/SignInForm';
 
-import { useAuth } from '@/context/AuthContext';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+export default function SignInPage() {
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <h1 className="text-center text-3xl font-bold text-gray-900">
+          Healthcare Assistant
+        </h1>
+        <p className="mt-2 text-center text-sm text-gray-600">
+          Sign in to access your personalized healthcare assistance
+        </p>
+      </div>
 
-export default function ProfilePage() {
-  const { user, loading, signOut } = useAuth();
-  const router = useRouter();
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    // This helps avoid hydration mismatch
-    setIsClient(true);
-  }, []);
-
-  const handleSignOut = () => {
-    signOut();
-    router.p
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <SignInForm />
+      </div>
+    </div>
+  );
+}

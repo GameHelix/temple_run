@@ -18,10 +18,22 @@ export default function ChatInterface() {
         : `Hello! I'm your healthcare assistant. How can I help you today?`,
       timestamp: new Date(),
     },
+    {
+      id: '2',
+      role: 'system',
+      content: 'You can ask me about common health conditions, preventive care, lifestyle topics, mental health, and more. Type "What can you help with?" to see all available topics.',
+      timestamp: new Date(),
+    }
   ]);
   
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[]>([
+    'What can you help with?',
+    'Tell me about anxiety',
+    'How can I improve my sleep?',
+    'What are symptoms of COVID-19?'
+  ]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to the bottom when new messages appear
@@ -31,7 +43,7 @@ export default function ChatInterface() {
 
   // Update welcome message when user logs in
   useEffect(() => {
-    if (messages.length === 1 && messages[0].role === 'system') {
+    if (messages.length === 2 && messages[0].role === 'system') {
       setMessages([
         {
           id: '1',
@@ -41,20 +53,27 @@ export default function ChatInterface() {
             : `Hello! I'm your healthcare assistant. How can I help you today?`,
           timestamp: new Date(),
         },
+        {
+          id: '2',
+          role: 'system',
+          content: 'You can ask me about common health conditions, preventive care, lifestyle topics, mental health, and more. Type "What can you help with?" to see all available topics.',
+          timestamp: new Date(),
+        }
       ]);
     }
   }, [user]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, submittedText?: string) => {
     e.preventDefault();
     
-    if (!input.trim()) return;
+    const messageText = submittedText || input;
+    if (!messageText.trim()) return;
     
     // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
-      content: input,
+      content: messageText,
       timestamp: new Date(),
     };
     
@@ -74,7 +93,7 @@ export default function ChatInterface() {
           ...(token && { Authorization: `Bearer ${token}` }),
         },
         body: JSON.stringify({ 
-          message: input,
+          message: messageText,
           userId: user?.id
         }),
       });
@@ -94,6 +113,9 @@ export default function ChatInterface() {
       };
       
       setMessages((prev) => [...prev, aiMessage]);
+      
+      // Update suggestions based on the conversation
+      updateSuggestions(messageText, data.message);
     } catch (error) {
       console.error('Error:', error);
       
@@ -109,6 +131,67 @@ export default function ChatInterface() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Update suggested questions based on conversation context
+  const updateSuggestions = (userMessage: string, aiResponse: string) => {
+    const lowerUserMsg = userMessage.toLowerCase();
+    const lowerAiResp = aiResponse.toLowerCase();
+    
+    // If user asked about a specific condition
+    if (lowerUserMsg.includes('diabetes')) {
+      setSuggestions([
+        'How can I manage diabetes?',
+        'What are diabetes risk factors?',
+        'Tell me about diabetes complications',
+        'Is diabetes hereditary?'
+      ]);
+    } 
+    else if (lowerUserMsg.includes('stress') || lowerUserMsg.includes('anxiety')) {
+      setSuggestions([
+        'How can I reduce stress naturally?',
+        'What are symptoms of anxiety?',
+        'Tell me about meditation techniques',
+        'How does stress affect sleep?'
+      ]);
+    }
+    else if (lowerUserMsg.includes('exercise') || lowerUserMsg.includes('fitness')) {
+      setSuggestions([
+        'What exercise is best for beginners?',
+        'How much exercise do I need per week?',
+        'Is walking good exercise?',
+        'How does exercise help mental health?'
+      ]);
+    }
+    else if (lowerUserMsg.includes('diet') || lowerUserMsg.includes('nutrition')) {
+      setSuggestions([
+        'What foods are heart-healthy?',
+        'Tell me about the Mediterranean diet',
+        'How much water should I drink daily?',
+        'What vitamins should I take?'
+      ]);
+    }
+    else if (lowerAiResp.includes('consult') || lowerAiResp.includes('see a doctor')) {
+      setSuggestions([
+        'When should I go to emergency room?',
+        'How to find a specialist doctor?',
+        'What questions to ask my doctor?',
+        'What can you help with?'
+      ]);
+    }
+    else {
+      // Default suggestions
+      setSuggestions([
+        'What can you help with?',
+        'Tell me about preventive healthcare',
+        'How can I improve my sleep?',
+        'What are common cold remedies?'
+      ]);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    handleSubmit(new Event('click') as unknown as React.FormEvent, suggestion);
   };
 
   return (
@@ -139,6 +222,20 @@ export default function ChatInterface() {
         )}
         
         <div ref={messagesEndRef} />
+      </div>
+      
+      {/* Suggested questions */}
+      <div className="px-4 pt-2 pb-1 flex flex-wrap gap-2">
+        {suggestions.map((suggestion, index) => (
+          <button
+            key={index}
+            onClick={() => handleSuggestionClick(suggestion)}
+            className="text-xs bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full hover:bg-gray-200 transition-colors"
+            disabled={isLoading}
+          >
+            {suggestion}
+          </button>
+        ))}
       </div>
       
       <form onSubmit={handleSubmit} className="border-t p-4">
