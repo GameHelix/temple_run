@@ -1,4 +1,16 @@
+'use client';
+
 import SignInForm from '@/components/auth/SignInForm';
+import { Suspense } from 'react';
+
+// Component for the sign-in form with suspense loading state
+function SignInFormWithSuspense() {
+  return (
+    <Suspense fallback={<div className="p-4 text-center">Loading sign in form...</div>}>
+      <SignInForm />
+    </Suspense>
+  );
+}
 
 export default function SignInPage() {
   return (
@@ -13,7 +25,7 @@ export default function SignInPage() {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <SignInForm />
+        <SignInFormWithSuspense />
       </div>
     </div>
   );

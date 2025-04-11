@@ -9,7 +9,7 @@ export default function SignInForm() {
   const { signIn } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get('redirectTo') || '/';
+  const redirectTo = searchParams?.get('redirectTo') || '/';
   
   const [formData, setFormData] = useState({
     email: '',
