@@ -14,10 +14,7 @@ export default function ProfilePage() {
     setIsClient(true);
   }, []);
 
-  const handleSignOut = () => {
-    signOut();
-    router.push('/auth/signin');
-  };
+  // Removed handleSignOut as it's handled in the navbar
 
   if (!isClient) {
     return null; // Prevent rendering until client-side
@@ -67,19 +64,11 @@ export default function ProfilePage() {
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 relative">
         <div className="px-4 py-6 sm:px-0">
           <div className="bg-gray-800/60 backdrop-blur-sm shadow overflow-hidden rounded-lg border border-gray-700">
-            <div className="px-4 py-5 sm:px-6 flex justify-between items-center">
-              <div>
-                <h2 className="text-2xl font-bold text-indigo-100">User Profile</h2>
-                <p className="mt-1 max-w-2xl text-sm text-indigo-300">
-                  Personal details and account information
-                </p>
-              </div>
-              <button
-                onClick={handleSignOut}
-                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-              >
-                Sign Out
-              </button>
+            <div className="px-4 py-5 sm:px-6">
+              <h2 className="text-2xl font-bold text-indigo-100">User Profile</h2>
+              <p className="mt-1 max-w-2xl text-sm text-indigo-300">
+                Personal details and account information
+              </p>
             </div>
             <div className="border-t border-gray-700">
               <dl>
