@@ -29,7 +29,7 @@ A Next.js-based healthcare chatbot application that provides health information 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/ismat-samadov/intelligent-healthcare.git
+   git clone https://github.com/ismat-samadov/intelligent_healthcare.git
    cd intelligent-healthcare
    ```
 
