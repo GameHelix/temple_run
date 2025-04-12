@@ -29,9 +29,10 @@ export default function Navbar() {
     setIsMenuOpen(false);
   };
 
-  // Simplified nav items - removed redundant terms link
+  // Simplified nav items - added Blog link that's visible to all users
   const navItems = [
     { label: 'Home', href: '/' },
+    { label: 'Blog', href: '/blog' },
     ...(user ? [{ label: 'Chat', href: '/chat' }] : []),
   ];
 
