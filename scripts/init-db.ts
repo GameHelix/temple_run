@@ -1,22 +1,29 @@
 // scripts/init-db.ts
-const dotenv = require('dotenv');
-dotenv.config();
+require('dotenv').config({ path: '.env.local' });
 const { Pool } = require('pg');
 
 console.log('Database Initialization Script');
 console.log('------------------------------');
 console.log('Environment variables loaded');
 
-// Create a database connection with SSL disabled
+// Create a database connection
 const pool = new Pool({
-  host: process.env.DB_HOST,
+  host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT || '5432'),
-  database: process.env.DB_NAME,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  // Disable SSL for local development
-  ssl: false
+  database: process.env.DB_NAME || 'healthcare_db',
+  user: process.env.DB_USER || 'postgres',
+  password: process.env.DB_PASSWORD || 'postgres',
+  // Use SSL only in production
+  ssl: process.env.NODE_ENV === 'production'
 });
+
+// Log connection details (without password)
+console.log('Connecting to database:');
+console.log(`- Host: ${process.env.DB_HOST || 'localhost'}`);
+console.log(`- Port: ${process.env.DB_PORT || '5432'}`);
+console.log(`- Database: ${process.env.DB_NAME || 'healthcare_db'}`);
+console.log(`- User: ${process.env.DB_USER || 'postgres'}`);
+console.log(`- SSL: ${process.env.NODE_ENV === 'production'}`);
 
 // Function to execute SQL queries
 async function query(text, params) {
