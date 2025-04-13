@@ -1,4 +1,3 @@
-// src/app/api/blog/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/jwt';
 import { isAdmin } from '@/lib/user-db';
@@ -11,8 +10,9 @@ import {
 // Get a specific blog post
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
+  const { params } = context;
   try {
     const postId = params.id;
     const blogPost = await getBlogPostById(postId);
@@ -24,12 +24,11 @@ export async function GET(
       );
     }
     
-    // If the post is not published, only allow admins to view it
     if (!blogPost.isPublished) {
       const authHeader = request.headers.get('Authorization');
       let isUserAdmin = false;
       
-      if (authHeader && authHeader.startsWith('Bearer ')) {
+      if (authHeader?.startsWith('Bearer ')) {
         const token = authHeader.substring(7);
         const decoded = verifyToken(token);
         
@@ -62,13 +61,13 @@ export async function GET(
 // Update a blog post (admin only)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
+  const { params } = context;
   try {
-    // Authenticate and check if user is admin
     const authHeader = request.headers.get('Authorization');
     
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (!authHeader?.startsWith('Bearer ')) {
       return NextResponse.json(
         { success: false, message: 'Authentication required' },
         { status: 401 }
@@ -85,7 +84,6 @@ export async function PUT(
       );
     }
     
-    // Check if user is an admin
     const adminCheck = await isAdmin(decoded.id);
     
     if (!adminCheck) {
@@ -96,11 +94,8 @@ export async function PUT(
     }
     
     const postId = params.id;
-    
-    // Parse request body
     const body = await request.json();
     
-    // Update the blog post
     const updatedPost = await updateBlogPost(decoded.id, postId, {
       title: body.title,
       content: body.content,
@@ -111,20 +106,20 @@ export async function PUT(
     
     if (!updatedPost) {
       return NextResponse.json(
-        { success: false, message: 'Blog post not found or update failed' },
+        { success: false, message: 'Update failed' },
         { status: 404 }
       );
     }
     
     return NextResponse.json({
       success: true,
-      message: 'Blog post updated successfully',
+      message: 'Blog post updated',
       post: updatedPost
     });
   } catch (error) {
     console.error('Error updating blog post:', error);
     return NextResponse.json(
-      { success: false, message: 'Failed to update blog post' },
+      { success: false, message: 'Update failed' },
       { status: 500 }
     );
   }
@@ -133,13 +128,13 @@ export async function PUT(
 // Delete a blog post (admin only)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
+  const { params } = context;
   try {
-    // Authenticate and check if user is admin
     const authHeader = request.headers.get('Authorization');
     
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (!authHeader?.startsWith('Bearer ')) {
       return NextResponse.json(
         { success: false, message: 'Authentication required' },
         { status: 401 }
@@ -151,12 +146,11 @@ export async function DELETE(
     
     if (!decoded?.id) {
       return NextResponse.json(
-        { success: false, message: 'Invalid authentication token' },
+        { success: false, message: 'Invalid token' },
         { status: 401 }
       );
     }
     
-    // Check if user is an admin
     const adminCheck = await isAdmin(decoded.id);
     
     if (!adminCheck) {
@@ -167,25 +161,23 @@ export async function DELETE(
     }
     
     const postId = params.id;
-    
-    // Delete the blog post
     const success = await deleteBlogPost(decoded.id, postId);
     
     if (!success) {
       return NextResponse.json(
-        { success: false, message: 'Blog post not found or delete failed' },
+        { success: false, message: 'Delete failed' },
         { status: 404 }
       );
     }
     
     return NextResponse.json({
       success: true,
-      message: 'Blog post deleted successfully'
+      message: 'Blog post deleted'
     });
   } catch (error) {
     console.error('Error deleting blog post:', error);
     return NextResponse.json(
-      { success: false, message: 'Failed to delete blog post' },
+      { success: false, message: 'Delete failed' },
       { status: 500 }
     );
   }
