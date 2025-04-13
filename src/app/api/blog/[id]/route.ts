@@ -11,10 +11,10 @@ import {
 // Get a specific blog post
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
-    const postId = params.id;
+    const postId = context.params.id;
     const blogPost = await getBlogPostById(postId);
     
     if (!blogPost) {
@@ -62,7 +62,7 @@ export async function GET(
 // Update a blog post (admin only)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     // Authenticate and check if user is admin
@@ -95,7 +95,7 @@ export async function PUT(
       );
     }
     
-    const postId = params.id;
+    const postId = context.params.id;
     
     // Parse request body
     const body = await request.json();
@@ -133,7 +133,7 @@ export async function PUT(
 // Delete a blog post (admin only)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     // Authenticate and check if user is admin
@@ -166,7 +166,7 @@ export async function DELETE(
       );
     }
     
-    const postId = params.id;
+    const postId = context.params.id;
     
     // Delete the blog post
     const success = await deleteBlogPost(decoded.id, postId);
