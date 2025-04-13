@@ -29,30 +29,35 @@ export async function createUser(userData: SignUpData): Promise<User | null> {
     const userId = uuidv4();
     const now = new Date();
     
-    console.log('Inserting new user with ID:', userId);
+    // Ensure role is either 'doctor' or 'patient', default to 'patient'
+    const role = userData.role === 'doctor' ? 'doctor' : 'patient';
     
-    // Insert the new user
+    console.log('Inserting new user with ID:', userId, 'and role:', role);
+    
+    // Insert the new user with role field
     const result = await query(
-      `INSERT INTO users (id, name, email, password, created_at, updated_at) 
-       VALUES ($1, $2, $3, $4, $5, $6) 
-       RETURNING id, name, email, created_at, updated_at`,
+      `INSERT INTO users (id, name, email, password, role, created_at, updated_at) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7) 
+       RETURNING id, name, email, role, created_at, updated_at`,
       [
         userId,
         userData.name,
         userData.email.toLowerCase(),
         hashedPassword,
+        role,
         now,
         now
       ]
     );
     
     if (result.rows.length > 0) {
-      console.log('User created successfully:', result.rows[0].email);
+      console.log('User created successfully:', result.rows[0].email, 'with role:', result.rows[0].role);
       // Convert the returned row to a User object
       return {
         id: result.rows[0].id,
         name: result.rows[0].name,
         email: result.rows[0].email,
+        role: result.rows[0].role,
         createdAt: new Date(result.rows[0].created_at),
         updatedAt: new Date(result.rows[0].updated_at)
       };
@@ -65,13 +70,14 @@ export async function createUser(userData: SignUpData): Promise<User | null> {
     throw error;
   }
 }
+
 /**
  * Finds a user by their email
  */
 export async function findUserByEmail(email: string): Promise<User | null> {
   try {
     const result = await query(
-      'SELECT id, name, email, created_at, updated_at FROM users WHERE email = $1',
+      'SELECT id, name, email, role, created_at, updated_at FROM users WHERE email = $1',
       [email.toLowerCase()]
     );
     
@@ -83,6 +89,7 @@ export async function findUserByEmail(email: string): Promise<User | null> {
       id: result.rows[0].id,
       name: result.rows[0].name,
       email: result.rows[0].email,
+      role: result.rows[0].role,
       createdAt: new Date(result.rows[0].created_at),
       updatedAt: new Date(result.rows[0].updated_at)
     };
@@ -98,7 +105,7 @@ export async function findUserByEmail(email: string): Promise<User | null> {
 export async function findUserById(id: string): Promise<User | null> {
   try {
     const result = await query(
-      'SELECT id, name, email, created_at, updated_at FROM users WHERE id = $1',
+      'SELECT id, name, email, role, created_at, updated_at FROM users WHERE id = $1',
       [id]
     );
     
@@ -110,6 +117,7 @@ export async function findUserById(id: string): Promise<User | null> {
       id: result.rows[0].id,
       name: result.rows[0].name,
       email: result.rows[0].email,
+      role: result.rows[0].role,
       createdAt: new Date(result.rows[0].created_at),
       updatedAt: new Date(result.rows[0].updated_at)
     };
@@ -151,7 +159,7 @@ export async function updateUserProfile(userId: string, name: string): Promise<U
       `UPDATE users 
        SET name = $1, updated_at = $2 
        WHERE id = $3 
-       RETURNING id, name, email, created_at, updated_at`,
+       RETURNING id, name, email, role, created_at, updated_at`,
       [name, now, userId]
     );
     
@@ -163,12 +171,63 @@ export async function updateUserProfile(userId: string, name: string): Promise<U
       id: result.rows[0].id,
       name: result.rows[0].name,
       email: result.rows[0].email,
+      role: result.rows[0].role,
       createdAt: new Date(result.rows[0].created_at),
       updatedAt: new Date(result.rows[0].updated_at)
     };
   } catch (error) {
     console.error('Error updating user profile:', error);
     throw error;
+  }
+}
+
+/**
+ * Update user role
+ */
+export async function updateUserRole(userId: string, role: 'doctor' | 'patient'): Promise<User | null> {
+  try {
+    const now = new Date();
+    const result = await query(
+      `UPDATE users 
+       SET role = $1, updated_at = $2 
+       WHERE id = $3 
+       RETURNING id, name, email, role, created_at, updated_at`,
+      [role, now, userId]
+    );
+    
+    if (result.rows.length === 0) {
+      return null;
+    }
+    
+    return {
+      id: result.rows[0].id,
+      name: result.rows[0].name,
+      email: result.rows[0].email,
+      role: result.rows[0].role,
+      createdAt: new Date(result.rows[0].created_at),
+      updatedAt: new Date(result.rows[0].updated_at)
+    };
+  } catch (error) {
+    console.error('Error updating user role:', error);
+    throw error;
+  }
+}
+
+/**
+ * Mark all existing users without a role as patients
+ */
+export async function markExistingUsersAsPatients(): Promise<boolean> {
+  try {
+    await query(
+      `UPDATE users 
+       SET role = 'patient' 
+       WHERE role IS NULL OR role = ''`
+    );
+    
+    return true;
+  } catch (error) {
+    console.error('Error marking existing users as patients:', error);
+    return false;
   }
 }
 

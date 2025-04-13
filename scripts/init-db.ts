@@ -1,23 +1,25 @@
 // scripts/init-db.ts
-import 'dotenv/config';
-import { Pool } from 'pg';
+const dotenv = require('dotenv');
+dotenv.config();
+const { Pool } = require('pg');
 
 console.log('Database Initialization Script');
 console.log('------------------------------');
 console.log('Environment variables loaded');
 
-// Create a database connection
+// Create a database connection with SSL disabled
 const pool = new Pool({
   host: process.env.DB_HOST,
   port: parseInt(process.env.DB_PORT || '5432'),
   database: process.env.DB_NAME,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  ssl: true
+  // Disable SSL for local development
+  ssl: false
 });
 
 // Function to execute SQL queries
-async function query(text: string, params?: any[]): Promise<any> {
+async function query(text, params) {
   console.log('Executing query:', text.substring(0, 50) + '...');
   const client = await pool.connect();
   try {
@@ -28,16 +30,17 @@ async function query(text: string, params?: any[]): Promise<any> {
 }
 
 // Function to initialize the database
-async function initDatabase(): Promise<void> {
+async function initDatabase() {
   try {
     console.log('Creating users table...');
-    // Create users table
+    // Create users table with role field
     await query(`
       CREATE TABLE IF NOT EXISTS users (
         id UUID PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL,
+        role VARCHAR(50) DEFAULT 'patient' NOT NULL,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
@@ -57,6 +60,14 @@ async function initDatabase(): Promise<void> {
           REFERENCES users(id)
           ON DELETE CASCADE
       );
+    `);
+    
+    console.log('Updating existing users to have the patient role...');
+    // Update existing users to have the 'patient' role
+    await query(`
+      UPDATE users
+      SET role = 'patient'
+      WHERE role IS NULL OR role = '';
     `);
     
     console.log('Database initialized successfully!');

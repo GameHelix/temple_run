@@ -28,6 +28,12 @@ const PROTECTED_ROUTES = [
   '/api/auth/me'
 ];
 
+// Routes that only doctors can access
+const DOCTOR_ONLY_ROUTES = [
+  '/doctor',
+  '/doctor/dashboard'
+];
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   

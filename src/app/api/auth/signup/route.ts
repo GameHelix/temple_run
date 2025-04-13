@@ -7,9 +7,9 @@ import { SignUpData } from '@/types/user';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, password }: SignUpData = body;
+    const { name, email, password, role }: SignUpData = body;
     
-    console.log('Sign-up request received for:', email);
+    console.log('Sign-up request received for:', email, 'with role:', role);
     
     // Validate input
     if (!name || !email || !password) {
@@ -28,8 +28,15 @@ export async function POST(request: Request) {
       );
     }
     
+    // Validate role
+    if (role !== 'doctor' && role !== 'patient') {
+      console.log('Sign-up validation failed: invalid role. Defaulting to patient.');
+      // Default to patient if role is invalid
+      body.role = 'patient';
+    }
+    
     // Create user
-    const user = await createUser({ name, email, password });
+    const user = await createUser({ name, email, password, role: body.role });
     
     if (!user) {
       console.log('User creation failed: email may already be in use');
@@ -41,12 +48,12 @@ export async function POST(request: Request) {
     
     // Generate JWT token
     const token = generateToken(user);
-    console.log('User registered successfully, token generated');
+    console.log('User registered successfully as', user.role, ', token generated');
     
     // Return success response
     return NextResponse.json({
       success: true,
-      message: 'User registered successfully',
+      message: `User registered successfully as ${user.role}`,
       user,
       token
     });

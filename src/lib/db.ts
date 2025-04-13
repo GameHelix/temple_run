@@ -31,17 +31,19 @@ export const query = async (text: string, params?: any[]) => {
 };
 
 // Helper function to create the necessary tables if they don't exist
+// src/lib/db.ts (updated initDatabase function)
 export const initDatabase = async () => {
   try {
     console.log('Initializing database...');
     
-    // Create users table
+    // Create users table with role field
     await query(`
       CREATE TABLE IF NOT EXISTS users (
         id UUID PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL,
+        role VARCHAR(50) DEFAULT 'patient' NOT NULL,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
@@ -60,6 +62,13 @@ export const initDatabase = async () => {
           REFERENCES users(id)
           ON DELETE CASCADE
       );
+    `);
+    
+    // Update existing users to have the 'patient' role
+    await query(`
+      UPDATE users
+      SET role = 'patient'
+      WHERE role IS NULL OR role = '';
     `);
     
     console.log('Database tables created successfully');

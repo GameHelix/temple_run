@@ -11,6 +11,8 @@ interface AuthContextType {
   signIn: (data: SignInData) => Promise<AuthResponse>;
   signUp: (data: SignUpData) => Promise<AuthResponse>;
   signOut: () => void;
+  isDoctor: () => boolean;
+  isPatient: () => boolean;
 }
 
 // Define the structure of the error response from the API
@@ -143,17 +145,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
   };
 
+  // Helper functions to check user role
+  const isDoctor = () => {
+    return user?.role === 'doctor';
+  };
+
+  const isPatient = () => {
+    return user?.role === 'patient';
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, error, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, loading, error, signIn, signUp, signOut, isDoctor, isPatient }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => {
+export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
+}

@@ -13,11 +13,12 @@ export default function SignUpForm() {
     email: '',
     password: '',
     confirmPassword: '',
+    role: 'patient' // Default to patient
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
@@ -44,6 +45,12 @@ export default function SignUpForm() {
       return;
     }
     
+    // Validate role
+    if (formData.role !== 'doctor' && formData.role !== 'patient') {
+      setError('Please select a valid role');
+      return;
+    }
+    
     try {
       setLoading(true);
       
@@ -51,6 +58,7 @@ export default function SignUpForm() {
         name: formData.name,
         email: formData.email,
         password: formData.password,
+        role: formData.role as 'doctor' | 'patient'
       });
       
       if (response.success) {
@@ -106,6 +114,23 @@ export default function SignUpForm() {
             placeholder="Enter your email"
             required
           />
+        </div>
+        
+        <div>
+          <label htmlFor="role" className="block text-sm font-medium text-indigo-100 mb-2">
+            I am a:
+          </label>
+          <select
+            id="role"
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            className="w-full px-4 py-2 bg-gray-700/70 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-white"
+            required
+          >
+            <option value="patient">Patient</option>
+            <option value="doctor">Healthcare Provider</option>
+          </select>
         </div>
         
         <div>

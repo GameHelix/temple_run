@@ -3,13 +3,13 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { Heart, Menu, X } from 'lucide-react';
+import { Heart, Menu, X, User, Users, UserPlus, LogOut } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, signOut, isDoctor } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -29,16 +29,21 @@ export default function Navbar() {
     setIsMenuOpen(false);
   };
 
-  // Simplified nav items - added Blog link that's visible to all users
-  // Add Appointment link that's only visible to authenticated users
+  // Base nav items for all users - added Blog link that's visible to all users
   const navItems = [
     { label: 'Home', href: '/' },
-    { label: 'Blog', href: '/blog' },
-    ...(user ? [
-      { label: 'Chat', href: '/chat' },
-      { label: 'Appointments', href: '/appointments' } // Add new appointments link for authenticated users
-    ] : []),
+    { label: 'Blog', href: '/blog' }
   ];
+
+  // Add role-specific nav items
+  if (user) {
+    navItems.push({ label: 'Chat', href: '/chat' });
+
+    // Add doctor-specific nav items
+    if (isDoctor()) {
+      navItems.push({ label: 'Provider Dashboard', href: '/doctor/dashboard' });
+    }
+  }
 
   return (
     <nav className="bg-gray-950 text-white shadow-md">
@@ -68,20 +73,27 @@ export default function Navbar() {
           
           <div className="hidden md:flex items-center space-x-2">
             {user ? (
-              <>
+              <div className="flex items-center gap-2">
+                {isDoctor() && (
+                  <span className="bg-green-100 text-green-800 text-xs rounded-full px-2 py-0.5">
+                    Doctor
+                  </span>
+                )}
                 <Link 
                   href="/profile"
-                  className="text-gray-300 hover:text-white px-3 py-2"
+                  className="text-gray-300 hover:text-white px-3 py-2 flex items-center"
                 >
+                  <User className="h-4 w-4 mr-1" />
                   Profile
                 </Link>
                 <button
                   onClick={handleSignOut}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md flex items-center"
                 >
+                  <LogOut className="h-4 w-4 mr-1" />
                   Sign Out
                 </button>
-              </>
+              </div>
             ) : (
               <>
                 <Link href="/auth/signin">
@@ -139,6 +151,13 @@ export default function Navbar() {
           <div className="border-t border-gray-800 pt-4 pb-3">
             {user ? (
               <div className="space-y-1">
+                {isDoctor() && (
+                  <div className="px-3 py-2">
+                    <span className="bg-green-100 text-green-800 text-xs rounded-full px-2 py-0.5">
+                      Doctor
+                    </span>
+                  </div>
+                )}
                 <Link 
                   href="/profile"
                   onClick={() => setIsMenuOpen(false)}
@@ -153,13 +172,15 @@ export default function Navbar() {
                 >
                   Chat
                 </Link>
-                <Link 
-                  href="/appointments"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800"
-                >
-                  Appointments
-                </Link>
+                {isDoctor() && (
+                  <Link 
+                    href="/doctor/dashboard"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800"
+                  >
+                    Provider Dashboard
+                  </Link>
+                )}
                 <button
                   onClick={handleSignOut}
                   className="block w-full text-left px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800"

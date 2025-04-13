@@ -7,12 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:init": "ts-node scripts/init-db.ts"
+    "db:init": "ts-node --transpile-only scripts/init-db.ts",
+    "db:update-users": "ts-node --transpile-only scripts/update-users-to-patients.ts",
+    "test:create-users": "ts-node --transpile-only scripts/test-user-creation.ts"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.1",
     "axios": "^1.8.4",
     "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^11.9.1",
     "dotenv": "^16.5.0",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.487.0",
@@ -21,6 +24,7 @@
     "pg": "^8.14.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "sqlite3": "^5.1.7",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

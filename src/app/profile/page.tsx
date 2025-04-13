@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function ProfilePage() {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, signOut, isDoctor } = useAuth();
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
 
@@ -13,8 +13,6 @@ export default function ProfilePage() {
     // This helps avoid hydration mismatch
     setIsClient(true);
   }, []);
-
-  // Removed handleSignOut as it's handled in the navbar
 
   if (!isClient) {
     return null; // Prevent rendering until client-side
@@ -85,6 +83,18 @@ export default function ProfilePage() {
                   </dd>
                 </div>
                 <div className="bg-gray-800/40 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt className="text-sm font-medium text-indigo-300">Account type</dt>
+                  <dd className="mt-1 text-sm sm:mt-0 sm:col-span-2">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      isDoctor() 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-blue-100 text-blue-800'
+                    }`}>
+                      {user.role === 'doctor' ? 'Healthcare Provider' : 'Patient'}
+                    </span>
+                  </dd>
+                </div>
+                <div className="bg-gray-900/40 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                   <dt className="text-sm font-medium text-indigo-300">Account created</dt>
                   <dd className="mt-1 text-sm text-indigo-100 sm:mt-0 sm:col-span-2">
                     {new Date(user.createdAt).toLocaleString()}
@@ -110,12 +120,23 @@ export default function ProfilePage() {
                     Get answers to your health questions from our AI assistant
                   </p>
                 </div>
-                <div className="p-4 border border-gray-700 rounded-lg hover:bg-gray-700/40 transition cursor-pointer">
-                  <h3 className="text-lg font-medium text-indigo-200">Health Records</h3>
-                  <p className="mt-2 text-sm text-indigo-300">
-                    View and manage your health information (Coming soon)
-                  </p>
-                </div>
+                
+                {isDoctor() ? (
+                  <div className="p-4 border border-gray-700 rounded-lg hover:bg-gray-700/40 transition cursor-pointer"
+                       onClick={() => router.push('/doctor/dashboard')}>
+                    <h3 className="text-lg font-medium text-indigo-200">Provider Dashboard</h3>
+                    <p className="mt-2 text-sm text-indigo-300">
+                      Access your provider dashboard and patient information
+                    </p>
+                  </div>
+                ) : (
+                  <div className="p-4 border border-gray-700 rounded-lg hover:bg-gray-700/40 transition cursor-pointer">
+                    <h3 className="text-lg font-medium text-indigo-200">Health Records</h3>
+                    <p className="mt-2 text-sm text-indigo-300">
+                      View and manage your health information (Coming soon)
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
