@@ -3,14 +3,15 @@ export const runtime = 'nodejs'; // Use Node.js runtime for middleware
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { verifyToken } from './lib/jwt';
-import { initDatabase, testConnection } from './lib/db';
+import { testConnection } from './lib/db';
+import initializeDatabase from './lib/initDB';
 
 // Initialize the database when the server starts
 // This is executed only once when the server initializes
 try {
   console.log('Starting database initialization from middleware...');
   Promise.all([
-    initDatabase(),
+    initializeDatabase(),
     testConnection()
   ]).catch(err => {
     console.error('Database initialization error:', err);
@@ -42,7 +43,12 @@ export function middleware(request: NextRequest) {
     pathname === route || pathname.startsWith(`${route}/`)
   );
   
-  if (isProtectedRoute) {
+  // Check if the path is a doctor-only route
+  const isDoctorRoute = DOCTOR_ONLY_ROUTES.some(route => 
+    pathname === route || pathname.startsWith(`${route}/`)
+  );
+  
+  if (isProtectedRoute || isDoctorRoute) {
     // Get the token from cookies or authorization header
     const authHeader = request.headers.get('Authorization');
     const cookieToken = request.cookies.get('auth_token')?.value;
@@ -68,6 +74,11 @@ export function middleware(request: NextRequest) {
       signInUrl.searchParams.set('redirectTo', pathname);
       return NextResponse.redirect(signInUrl);
     }
+    
+    // For doctor-only routes, we should check the user's role
+    // This would typically be done in the component itself,
+    // but for added security we could enhance this middleware
+    // by decoding the token and checking the role
   }
   
   return NextResponse.next();
