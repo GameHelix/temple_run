@@ -1,11 +1,18 @@
 // src/types/user.ts
+
 export interface User {
   id: string;
-  email: string;
   name: string;
-  role: 'doctor' | 'patient' | 'admin';
-  createdAt: Date;
-  updatedAt: Date;
+  email: string;
+  role: 'admin' | 'doctor' | 'patient';
+  isVerified?: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SignInData {
+  email: string;
+  password: string;
 }
 
 export interface SignUpData {
@@ -15,11 +22,6 @@ export interface SignUpData {
   role: 'doctor' | 'patient' | 'admin';
 }
 
-export interface SignInData {
-  email: string;
-  password: string;
-}
-
 export interface AuthResponse {
   success: boolean;
   message: string;
@@ -27,19 +29,20 @@ export interface AuthResponse {
   token?: string;
 }
 
-// Blog related types
+// Blog post interfaces
 export interface BlogPost {
   id: string;
   title: string;
+  slug: string;
   content: string;
   summary: string;
   authorId: string;
   authorName: string;
-  publishedAt: Date;
-  updatedAt: Date;
-  slug: string;
   tags: string[];
   isPublished: boolean;
+  publishedAt: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface BlogPostInput {
