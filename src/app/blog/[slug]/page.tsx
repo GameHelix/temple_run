@@ -2,22 +2,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import axios from 'axios';
 import { BlogPost } from '@/types/user';
 import BlogPostDetail from '@/components/blog/BlogPostDetail';
 
-interface BlogPostPageProps {
-  params: {
-    slug: string;
-  };
-}
-
-export default function BlogPostPage({ params }: BlogPostPageProps) {
+export default function BlogPostPage() {
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const router = useRouter();
-  const { slug } = params;
+  const params = useParams();
+  const slug = params?.slug as string;
 
   useEffect(() => {
     const fetchPosts = async () => {

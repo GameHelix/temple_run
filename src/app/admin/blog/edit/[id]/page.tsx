@@ -2,20 +2,15 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import BlogEditor from '@/components/admin/BlogEditor';
 
-interface EditBlogPostPageProps {
-  params: {
-    id: string;
-  };
-}
-
-export default function EditBlogPostPage({ params }: EditBlogPostPageProps) {
+export default function EditBlogPostPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
-  const postId = params.id;
+  const params = useParams();
+  const postId = params?.id as string;
 
   // Check if user is admin
   useEffect(() => {
