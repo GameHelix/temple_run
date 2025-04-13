@@ -1,3 +1,4 @@
+// src/lib/jwt.ts
 import jwt from 'jsonwebtoken';
 import { User } from '@/types/user';
 
@@ -28,3 +29,6 @@ export function verifyToken(token: string): JwtPayload | null {
     return null;
   }
 }
+
+// Note: This file is used for server components and API routes,
+// but not in middleware (which uses edge-jwt.ts instead)

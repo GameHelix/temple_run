@@ -1,7 +1,7 @@
 // src/middleware.ts
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { verifyToken } from './lib/jwt';
+import { verifyTokenForEdge } from './lib/edge-jwt';
 
 // Add routes that should be protected here
 const PROTECTED_ROUTES = [
@@ -45,7 +45,7 @@ export function middleware(request: NextRequest) {
     // Use cookie token first, then header token
     const token = cookieToken || headerToken;
     
-    // If no token or invalid token, redirect to sign-in page
+    // If no token, redirect to sign-in page
     if (!token) {
       console.log('No token found, redirecting to sign-in');
       const signInUrl = new URL('/auth/signin', request.url);
@@ -54,8 +54,9 @@ export function middleware(request: NextRequest) {
     }
     
     try {
-      // Verify the token
-      const decoded = verifyToken(token);
+      // Using edge-compatible token verification
+      const decoded = verifyTokenForEdge(token);
+      
       if (!decoded) {
         console.log('Invalid token, redirecting to sign-in');
         const signInUrl = new URL('/auth/signin', request.url);
@@ -65,7 +66,6 @@ export function middleware(request: NextRequest) {
       
       // For doctor-only routes, check the user's role
       if (isDoctorRoute) {
-        // Assuming your token contains a role field
         if (decoded.role !== 'doctor') {
           // Redirect non-doctors to home
           return NextResponse.redirect(new URL('/', request.url));
@@ -83,18 +83,16 @@ export function middleware(request: NextRequest) {
           value: headerToken,
           httpOnly: true,
           path: '/',
-          sameSite: 'strict',
-          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
           maxAge: 60 * 60 * 24 * 7 // 7 days
         });
       }
       
-      // Clone the request headers and set the Authorization header
-      // This ensures the token is available to API routes
+      // Pass the token in headers to API routes
       const requestHeaders = new Headers(request.headers);
       requestHeaders.set('Authorization', `Bearer ${token}`);
       
-      // Return the modified request with headers
+      // Return the modified request
       return NextResponse.next({
         request: {
           headers: requestHeaders,
