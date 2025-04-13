@@ -1,4 +1,4 @@
-// src/lib/blog-db.ts
+// Improved blog-db.ts with better typing
 import { query } from './db';
 import { BlogPost, BlogPostInput } from '@/types/user';
 import { v4 as uuidv4 } from 'uuid';
@@ -113,7 +113,7 @@ export async function updateBlogPost(
     
     // Start building the query
     let updateQuery = `UPDATE blog_posts SET updated_at = CURRENT_TIMESTAMP`;
-    const queryParams: any[] = [];
+    const queryParams: unknown[] = [];
     let paramCounter = 1;
     
     // Add fields to update only if they're provided

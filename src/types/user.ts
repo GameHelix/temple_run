@@ -6,8 +6,8 @@ export interface User {
   email: string;
   role: 'admin' | 'doctor' | 'patient';
   isVerified?: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface SignInData {
@@ -40,9 +40,8 @@ export interface BlogPost {
   authorName: string;
   tags: string[];
   isPublished: boolean;
-  publishedAt: string;
-  createdAt: string;
-  updatedAt: string;
+  publishedAt: Date;
+  updatedAt: Date;
 }
 
 export interface BlogPostInput {

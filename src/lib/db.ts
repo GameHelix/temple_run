@@ -18,7 +18,7 @@ export const getClient = async () => {
 };
 
 // Helper function to execute SQL queries
-export const query = async (text: string, params?: any[]) => {
+export const query = async (text: string, params?: unknown[]) => {
   const client = await pool.connect();
   try {
     return await client.query(text, params);

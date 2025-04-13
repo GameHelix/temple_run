@@ -109,8 +109,8 @@ export default function Home() {
           <h2 className="text-3xl font-bold mb-8 text-white">What Healthcare Means To Us</h2>
           <div className="max-w-3xl mx-auto">
             <blockquote className="text-xl italic text-indigo-100 mb-6">
-              "The goal of our healthcare assistant is to make reliable health information accessible to everyone, 
-              empowering you to make informed decisions about your wellbeing."
+              &quot;The goal of our healthcare assistant is to make reliable health information accessible to everyone, 
+              empowering you to make informed decisions about your wellbeing.&quot;
             </blockquote>
             <p className="text-indigo-200">
               Powered by advanced AI technology to provide evidence-based guidance

@@ -1,3 +1,4 @@
+// src/lib/user-db.ts - Fixed typing issues
 import { User, SignUpData } from '@/types/user';
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -276,8 +277,6 @@ export async function getChatHistory(userId: string, limit: number = 20): Promis
   }
 }
 
-
-// Add these functions to src/lib/user-db.ts
 
 /**
  * Creates an admin user (should only be used in a controlled environment)

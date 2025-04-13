@@ -1,3 +1,4 @@
+// src/components/admin/BlogEditor.tsx - Fixed quotes
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -5,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
 import { useAuth } from '@/context/AuthContext';
-import { BlogPost, BlogPostInput } from '@/types/user';
+import { BlogPostInput } from '@/types/user';
 
 interface BlogEditorProps {
   postId?: string; // If provided, we're editing an existing post
@@ -289,7 +290,7 @@ export default function BlogEditor({ postId }: BlogEditorProps) {
             </label>
           </div>
           <p className="mt-1 text-xs text-indigo-300">
-            If unchecked, the post will be saved as a draft and won't be visible to regular users.
+            If unchecked, the post will be saved as a draft and won&apos;t be visible to regular users.
           </p>
         </div>
         

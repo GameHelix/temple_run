@@ -8,16 +8,13 @@ import {
   deleteBlogPost 
 } from '@/lib/blog-db';
 
-type Props = {
-  params: {
-    id: string;
-  };
-};
-
 // Get a specific blog post
-export async function GET(request: NextRequest, props: Props) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
-    const postId = props.params.id;
+    const postId = params.id;
     const blogPost = await getBlogPostById(postId);
     
     if (!blogPost) {
@@ -63,7 +60,10 @@ export async function GET(request: NextRequest, props: Props) {
 }
 
 // Update a blog post (admin only)
-export async function PUT(request: NextRequest, props: Props) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     // Authenticate and check if user is admin
     const authHeader = request.headers.get('Authorization');
@@ -95,7 +95,7 @@ export async function PUT(request: NextRequest, props: Props) {
       );
     }
     
-    const postId = props.params.id;
+    const postId = params.id;
     
     // Parse request body
     const body = await request.json();
@@ -131,7 +131,10 @@ export async function PUT(request: NextRequest, props: Props) {
 }
 
 // Delete a blog post (admin only)
-export async function DELETE(request: NextRequest, props: Props) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     // Authenticate and check if user is admin
     const authHeader = request.headers.get('Authorization');
@@ -163,7 +166,7 @@ export async function DELETE(request: NextRequest, props: Props) {
       );
     }
     
-    const postId = props.params.id;
+    const postId = params.id;
     
     // Delete the blog post
     const success = await deleteBlogPost(decoded.id, postId);

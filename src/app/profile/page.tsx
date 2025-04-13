@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function ProfilePage() {
-  const { user, loading, signOut, isDoctor } = useAuth();
+  const { user, loading, isDoctor } = useAuth();
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
 

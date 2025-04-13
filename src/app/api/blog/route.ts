@@ -4,8 +4,7 @@ import { verifyToken } from '@/lib/jwt';
 import { isAdmin } from '@/lib/user-db';
 import { 
   createBlogPost, 
-  getAllBlogPosts, 
-  getBlogPostById 
+  getAllBlogPosts
 } from '@/lib/blog-db';
 
 // Get all blog posts

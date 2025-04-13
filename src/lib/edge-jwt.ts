@@ -1,12 +1,10 @@
 // src/lib/edge-jwt.ts
 // This file contains JWT functions compatible with Edge Runtime
 
-import { User } from '@/types/user';
-
 interface JwtPayload {
   id: string;
   email: string;
-  role?: 'doctor' | 'patient';
+  role?: 'doctor' | 'patient' | 'admin';
   exp?: number;
 }
 
