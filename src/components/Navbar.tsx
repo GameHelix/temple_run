@@ -29,6 +29,12 @@ export default function Navbar() {
     setIsMenuOpen(false);
   };
 
+  // Handle navigation without page refresh
+  const handleNavigate = (href: string) => {
+    setIsMenuOpen(false); // Close mobile menu
+    router.push(href);
+  };
+
   // Base nav items for all users - added Blog link that's visible to all users
   const navItems = [
     { label: 'Home', href: '/' },
@@ -50,23 +56,26 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link href="/" className="flex-shrink-0 flex items-center">
+            <div 
+              onClick={() => handleNavigate('/')}
+              className="flex-shrink-0 flex items-center cursor-pointer"
+            >
               <Heart className="h-8 w-8 text-indigo-400" />
               <span className="ml-2 text-xl font-bold text-white">Healthcare Assistant</span>
-            </Link>
+            </div>
             <div className="hidden md:ml-6 md:flex md:space-x-8">
               {navItems.map((item) => (
-                <Link
+                <div
                   key={item.href}
-                  href={item.href}
+                  onClick={() => handleNavigate(item.href)}
                   className={`${
                     pathname === item.href
                       ? 'border-b-2 border-indigo-500 text-white'
                       : 'border-transparent text-gray-300 hover:border-gray-300 hover:text-white'
-                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium cursor-pointer`}
                 >
                   {item.label}
-                </Link>
+                </div>
               ))}
             </div>
           </div>
@@ -79,13 +88,13 @@ export default function Navbar() {
                     Doctor
                   </span>
                 )}
-                <Link 
-                  href="/profile"
-                  className="text-gray-300 hover:text-white px-3 py-2 flex items-center"
+                <div 
+                  onClick={() => handleNavigate('/profile')}
+                  className="text-gray-300 hover:text-white px-3 py-2 flex items-center cursor-pointer"
                 >
                   <User className="h-4 w-4 mr-1" />
                   Profile
-                </Link>
+                </div>
                 <button
                   onClick={handleSignOut}
                   className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md flex items-center"
@@ -96,16 +105,18 @@ export default function Navbar() {
               </div>
             ) : (
               <>
-                <Link href="/auth/signin">
-                  <span className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                    Sign In
-                  </span>
-                </Link>
-                <Link href="/auth/signup">
-                  <span className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md">
-                    Sign Up
-                  </span>
-                </Link>
+                <div 
+                  onClick={() => handleNavigate('/auth/signin')}
+                  className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
+                >
+                  Sign In
+                </div>
+                <div 
+                  onClick={() => handleNavigate('/auth/signup')}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md cursor-pointer"
+                >
+                  Sign Up
+                </div>
               </>
             )}
           </div>
@@ -133,18 +144,17 @@ export default function Navbar() {
         <div className="md:hidden">
           <div className="pt-2 pb-3 space-y-1">
             {navItems.map((item) => (
-              <Link
+              <div
                 key={item.href}
-                href={item.href}
+                onClick={() => handleNavigate(item.href)}
                 className={`${
                   pathname === item.href
                     ? 'bg-indigo-900 text-white'
                     : 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                } block px-3 py-2 text-base font-medium`}
-                onClick={() => setIsMenuOpen(false)}
+                } block px-3 py-2 text-base font-medium cursor-pointer`}
               >
                 {item.label}
-              </Link>
+              </div>
             ))}
           </div>
           
@@ -158,28 +168,25 @@ export default function Navbar() {
                     </span>
                   </div>
                 )}
-                <Link 
-                  href="/profile"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800"
+                <div 
+                  onClick={() => handleNavigate('/profile')}
+                  className="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800 cursor-pointer"
                 >
                   Profile
-                </Link>
-                <Link 
-                  href="/chat"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800"
+                </div>
+                <div 
+                  onClick={() => handleNavigate('/chat')}
+                  className="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800 cursor-pointer"
                 >
                   Chat
-                </Link>
+                </div>
                 {isDoctor() && (
-                  <Link 
-                    href="/doctor/dashboard"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800"
+                  <div 
+                    onClick={() => handleNavigate('/doctor/dashboard')}
+                    className="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800 cursor-pointer"
                   >
                     Provider Dashboard
-                  </Link>
+                  </div>
                 )}
                 <button
                   onClick={handleSignOut}
@@ -190,20 +197,18 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="space-y-1 px-3">
-                <Link 
-                  href="/auth/signin"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block bg-gray-800 text-white px-3 py-2 rounded-md text-base font-medium mb-2"
+                <div 
+                  onClick={() => handleNavigate('/auth/signin')}
+                  className="block bg-gray-800 text-white px-3 py-2 rounded-md text-base font-medium mb-2 cursor-pointer"
                 >
                   Sign In
-                </Link>
-                <Link 
-                  href="/auth/signup"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block bg-indigo-600 text-white px-3 py-2 rounded-md text-base font-medium"
+                </div>
+                <div 
+                  onClick={() => handleNavigate('/auth/signup')}
+                  className="block bg-indigo-600 text-white px-3 py-2 rounded-md text-base font-medium cursor-pointer"
                 >
                   Sign Up
-                </Link>
+                </div>
               </div>
             )}
           </div>

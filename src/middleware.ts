@@ -72,12 +72,29 @@ export function middleware(request: NextRequest) {
         }
       }
       
+      // Create a new response
+      const response = NextResponse.next();
+      
+      // Ensure the auth token is present in cookies
+      if (!cookieToken && headerToken) {
+        // Set the cookie for future requests if it's missing but we have a header token
+        response.cookies.set({
+          name: 'auth_token',
+          value: headerToken,
+          httpOnly: true,
+          path: '/',
+          sameSite: 'strict',
+          secure: process.env.NODE_ENV === 'production',
+          maxAge: 60 * 60 * 24 * 7 // 7 days
+        });
+      }
+      
       // Clone the request headers and set the Authorization header
       // This ensures the token is available to API routes
       const requestHeaders = new Headers(request.headers);
       requestHeaders.set('Authorization', `Bearer ${token}`);
       
-      // Return the modified request
+      // Return the modified request with headers
       return NextResponse.next({
         request: {
           headers: requestHeaders,

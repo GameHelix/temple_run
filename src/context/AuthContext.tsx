@@ -27,7 +27,7 @@ const setCookie = (name: string, value: string, days: number = 7) => {
   const date = new Date();
   date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
   const expires = "; expires=" + date.toUTCString();
-  document.cookie = name + "=" + (value || "") + expires + "; path=/";
+  document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Strict; Secure=" + (process.env.NODE_ENV === 'production');
 };
 
 // Function to get a cookie (client-side)
@@ -46,7 +46,7 @@ const getCookie = (name: string): string | null => {
 
 // Function to delete a cookie (client-side)
 const deleteCookie = (name: string) => {
-  document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Strict;';
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -69,10 +69,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           // Set default Authorization header for all requests
           axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
           
+          // Make sure tokens are synced between localStorage and cookies
+          if (typeof window !== 'undefined') {
+            if (!localToken && cookieToken) {
+              localStorage.setItem('auth_token', cookieToken);
+            } else if (localToken && !cookieToken) {
+              setCookie('auth_token', localToken);
+            }
+          }
+          
           const response = await axios.get('/api/auth/me');
           
           if (response.data.user) {
             setUser(response.data.user);
+            console.log("User authenticated:", response.data.user);
           }
         }
       } catch (err) {
@@ -160,6 +170,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         axios.defaults.headers.common['Authorization'] = `Bearer ${result.token}`;
         
         setUser(result.user);
+        console.log("User signed in:", result.user);
       } else {
         setError(result.message || 'Sign in failed');
       }
@@ -194,6 +205,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         axios.defaults.headers.common['Authorization'] = `Bearer ${result.token}`;
         
         setUser(result.user);
+        console.log("User signed up:", result.user);
       } else {
         setError(result.message || 'Sign up failed');
       }
