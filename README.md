@@ -32,7 +32,7 @@ A Next.js-based healthcare assistant application that provides health informatio
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/intelligent-healthcare-assistant.git
+   git clone https://github.com/ismat-samadov/intelligent-healthcare-assistant.git
    cd intelligent-healthcare-assistant
    ```
 
