@@ -84,14 +84,14 @@ INSERT INTO users (
 SELECT 
   '33333333-3333-3333-3333-333333333333', -- admin UUID
   'System Administrator', -- name
-  'admin@healthcareassistant.com', -- email (will be converted to lowercase)
-  '$2a$10$XJ9Sdl4WgAwNFPD6kQ5QSu8h4mZxF1KNMrjuv.MAIm80TA5wrR7U6', -- hashed password for 'Admin123!'
+  'example@example.com', -- email (will be converted to lowercase)
+  '$2a$10$XJ9Sdl4WgAwNFPD6kQ5QSu8h4mZxF1KNMrjuv.MAIm80TA5wrR7U6', -- hasched password
   'admin', -- role
   CURRENT_TIMESTAMP, -- created_at
   CURRENT_TIMESTAMP -- updated_at
 WHERE 
   NOT EXISTS (
-    SELECT 1 FROM users WHERE email = 'admin@healthcareassistant.com'
+    SELECT 1 FROM users WHERE email = 'admin@admin.com'
   )
 ON CONFLICT (email) DO 
   UPDATE SET role = 'admin';
