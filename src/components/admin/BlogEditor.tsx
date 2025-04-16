@@ -1,9 +1,9 @@
-// src/components/admin/BlogEditor.tsx - Fixed quotes
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import axios from 'axios';
 import { useAuth } from '@/context/AuthContext';
 import { BlogPostInput } from '@/types/user';
@@ -21,6 +21,7 @@ export default function BlogEditor({ postId }: BlogEditorProps) {
     title: '',
     content: '',
     summary: '',
+    imageUrl: '',
     tags: [],
     isPublished: false
   });
@@ -29,6 +30,7 @@ export default function BlogEditor({ postId }: BlogEditorProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [initialLoading, setInitialLoading] = useState(isEditing);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   // Check if user is admin
   useEffect(() => {
@@ -52,9 +54,14 @@ export default function BlogEditor({ postId }: BlogEditorProps) {
             title: post.title,
             content: post.content,
             summary: post.summary,
+            imageUrl: post.imageUrl || '',
             tags: post.tags || [],
             isPublished: post.isPublished
           });
+          
+          if (post.imageUrl) {
+            setImagePreview(post.imageUrl);
+          }
         } else {
           setError('Failed to load post data');
         }
@@ -72,6 +79,13 @@ export default function BlogEditor({ postId }: BlogEditorProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Update image preview when image URL changes
+    if (name === 'imageUrl' && value) {
+      setImagePreview(value);
+    } else if (name === 'imageUrl' && !value) {
+      setImagePreview(null);
+    }
   };
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -201,6 +215,41 @@ export default function BlogEditor({ postId }: BlogEditorProps) {
           />
         </div>
         
+        {/* Image URL field */}
+        <div className="mb-6">
+          <label htmlFor="imageUrl" className="block text-sm font-medium text-indigo-200 mb-2">
+            Featured Image URL
+          </label>
+          <input
+            type="url"
+            id="imageUrl"
+            name="imageUrl"
+            value={formData.imageUrl}
+            onChange={handleChange}
+            className="w-full px-4 py-2 bg-gray-700/70 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-white"
+            placeholder="https://example.com/image.jpg"
+          />
+          <p className="mt-1 text-xs text-indigo-300">
+            Enter a URL to an image that will be displayed as the post's featured image
+          </p>
+          
+          {/* Image Preview */}
+          {imagePreview && (
+            <div className="mt-3">
+              <p className="text-sm font-medium text-indigo-200 mb-2">Image Preview:</p>
+              <div className="relative h-60 w-full rounded-lg overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img 
+                  src={imagePreview} 
+                  alt="Featured image preview" 
+                  className="object-cover w-full h-full"
+                  onError={() => setImagePreview(null)}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+        
         <div className="mb-6">
           <label htmlFor="summary" className="block text-sm font-medium text-indigo-200 mb-2">
             Summary (optional)
@@ -232,6 +281,9 @@ export default function BlogEditor({ postId }: BlogEditorProps) {
           ></textarea>
           <p className="mt-2 text-xs text-indigo-300">
             HTML formatting is supported. Use &lt;h2&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, etc. for formatting.
+          </p>
+          <p className="mt-1 text-xs text-indigo-300">
+            To embed images in the content, use HTML: &lt;img src="https://example.com/image.jpg" alt="Description" class="blog-image" /&gt;
           </p>
         </div>
         

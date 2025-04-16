@@ -1,4 +1,4 @@
-// Improved blog-db.ts with better typing
+// src/lib/blog-db.ts
 import { query } from './db';
 import { BlogPost, BlogPostInput } from '@/types/user';
 import { v4 as uuidv4 } from 'uuid';
@@ -51,16 +51,17 @@ export async function createBlogPost(userId: string, postData: BlogPostInput): P
     // Insert the new blog post
     const result = await query(
       `INSERT INTO blog_posts (
-        id, title, content, summary, author_id, published_at, updated_at, 
+        id, title, content, summary, image_url, author_id, published_at, updated_at, 
         slug, tags, is_published
       ) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
       RETURNING *`,
       [
         postId,
         postData.title,
         postData.content,
         postData.summary,
+        postData.imageUrl || null,
         userId,
         now,
         now,
@@ -77,6 +78,7 @@ export async function createBlogPost(userId: string, postData: BlogPostInput): P
         title: result.rows[0].title,
         content: result.rows[0].content,
         summary: result.rows[0].summary,
+        imageUrl: result.rows[0].image_url,
         authorId: result.rows[0].author_id,
         authorName: authorName,
         publishedAt: new Date(result.rows[0].published_at),
@@ -141,6 +143,12 @@ export async function updateBlogPost(
       paramCounter++;
     }
     
+    if (postData.imageUrl !== undefined) {
+      updateQuery += `, image_url = $${paramCounter}`;
+      queryParams.push(postData.imageUrl || null);
+      paramCounter++;
+    }
+    
     if (postData.tags !== undefined) {
       updateQuery += `, tags = $${paramCounter}`;
       queryParams.push(postData.tags);
@@ -180,6 +188,7 @@ export async function updateBlogPost(
       title: result.rows[0].title,
       content: result.rows[0].content,
       summary: result.rows[0].summary,
+      imageUrl: result.rows[0].image_url,
       authorId: result.rows[0].author_id,
       authorName: authorName,
       publishedAt: new Date(result.rows[0].published_at),
@@ -244,6 +253,7 @@ export async function getAllBlogPosts(adminView: boolean = false): Promise<BlogP
       title: row.title,
       content: row.content,
       summary: row.summary,
+      imageUrl: row.image_url,
       authorId: row.author_id,
       authorName: row.author_name,
       publishedAt: new Date(row.published_at),
@@ -280,6 +290,7 @@ export async function getBlogPostById(postId: string): Promise<BlogPost | null> 
       title: result.rows[0].title,
       content: result.rows[0].content,
       summary: result.rows[0].summary,
+      imageUrl: result.rows[0].image_url,
       authorId: result.rows[0].author_id,
       authorName: result.rows[0].author_name,
       publishedAt: new Date(result.rows[0].published_at),
@@ -316,6 +327,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
       title: result.rows[0].title,
       content: result.rows[0].content,
       summary: result.rows[0].summary,
+      imageUrl: result.rows[0].image_url,
       authorId: result.rows[0].author_id,
       authorName: result.rows[0].author_name,
       publishedAt: new Date(result.rows[0].published_at),

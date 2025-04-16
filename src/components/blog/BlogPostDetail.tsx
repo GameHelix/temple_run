@@ -59,6 +59,12 @@ export default function BlogPostDetail({ slug }: BlogPostProps) {
     }
   };
 
+  // Function to format the HTML content - add custom classes to images
+  const formatContent = (content: string) => {
+    // Add 'blog-image' class to all images in the content
+    return content.replace(/<img /g, '<img class="blog-image" ');
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
@@ -100,6 +106,23 @@ export default function BlogPostDetail({ slug }: BlogPostProps) {
       </Link>
       
       <div className="bg-gray-800/60 backdrop-blur-sm border border-gray-700 rounded-lg overflow-hidden shadow-lg">
+        {/* Featured image */}
+        {post.imageUrl && (
+          <div className="w-full h-72 md:h-96 relative">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img 
+              src={post.imageUrl}
+              alt={post.title}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.onerror = null;
+                target.style.display = 'none';
+              }}
+            />
+          </div>
+        )}
+        
         <div className="p-8">
           <header className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold text-indigo-100 mb-4">{post.title}</h1>
@@ -141,8 +164,8 @@ export default function BlogPostDetail({ slug }: BlogPostProps) {
             )}
           </header>
           
-          <div className="prose prose-invert max-w-none prose-indigo prose-lg">
-            <div dangerouslySetInnerHTML={{ __html: post.content }} />
+          <div className="prose prose-invert max-w-none prose-indigo prose-lg blog-content">
+            <div dangerouslySetInnerHTML={{ __html: formatContent(post.content) }} />
           </div>
         </div>
       </div>
