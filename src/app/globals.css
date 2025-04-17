@@ -25,3 +25,34 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Additional overrides to ensure blog content visibility */
+.blog-content * {
+  color: #e0e7ff !important;
+}
+
+.blog-content a {
+  color: #93c5fd !important;
+}
+
+.blog-content a:hover {
+  color: #60a5fa !important;
+}
+
+/* Override any Tailwind prose text colors for dark mode */
+.prose-invert * {
+  color: #e0e7ff !important;
+}
+
+.prose-invert a {
+  color: #93c5fd !important;
+}
+
+.prose-invert a:hover {
+  color: #60a5fa !important;
+}
+
+/* Exception for code blocks */
+.prose-invert pre, .prose-invert code, .blog-content pre, .blog-content code {
+  color: #e5e7eb !important;
+}

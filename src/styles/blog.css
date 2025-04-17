@@ -1,125 +1,154 @@
-/* src/styles/blog.css */
+/* src/styles/blog.css - Fixed text visibility issues */
 
 /* Blog content styles */
 .blog-content img.blog-image {
-    display: block;
-    max-width: 100%;
-    margin: 2rem auto;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  }
-  
-  .blog-content img.blog-image.medium {
-    max-width: 85%;
-  }
-  
-  .blog-content img.blog-image.small {
-    max-width: 65%;
-  }
-  
-  .blog-content blockquote {
-    border-left: 4px solid #8b5cf6;
-    padding-left: 1rem;
-    margin-left: 0;
-    color: #a5b4fc;
-    font-style: italic;
-  }
-  
-  .blog-content p {
-    margin-bottom: 1.5rem;
-    line-height: 1.8;
-  }
-  
-  .blog-content h2 {
-    font-size: 1.875rem;
-    margin-top: 2.5rem;
-    margin-bottom: 1.25rem;
-    font-weight: 700;
-    color: #e0e7ff;
-  }
-  
-  .blog-content h3 {
-    font-size: 1.5rem;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    font-weight: 600;
-    color: #c7d2fe;
-  }
-  
-  .blog-content ul, .blog-content ol {
-    margin-bottom: 1.5rem;
-    padding-left: 1.5rem;
-  }
-  
-  .blog-content li {
-    margin-bottom: 0.5rem;
-  }
-  
-  .blog-content a {
-    color: #93c5fd;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-  
-  .blog-content a:hover {
-    color: #60a5fa;
-  }
-  
-  /* Caption styles */
-  .blog-content figure {
-    margin: 2rem auto;
-  }
-  
-  .blog-content figcaption {
-    text-align: center;
-    font-size: 0.875rem;
-    color: #9ca3af;
-    margin-top: 0.5rem;
-  }
-  
-  /* Code block styles */
-  .blog-content pre {
-    background-color: #1f2937;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    overflow-x: auto;
-    margin: 1.5rem 0;
-  }
-  
-  .blog-content code {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    font-size: 0.875rem;
-    padding: 0.125rem 0.25rem;
-    background-color: rgba(31, 41, 55, 0.5);
-    border-radius: 0.25rem;
-  }
-  
-  .blog-content pre code {
-    padding: 0;
-    background-color: transparent;
-  }
-  
-  /* Medium-style image zoom on hover */
-  .blog-content img.blog-image {
-    transition: transform 0.3s ease;
-  }
-  
-  .blog-content img.blog-image:hover {
-    transform: scale(1.02);
-  }
-  
-  /* Image positioning classes */
-  .blog-content img.blog-image.left {
-    margin-left: 0;
-    margin-right: auto;
-  }
-  
-  .blog-content img.blog-image.right {
-    margin-left: auto;
-    margin-right: 0;
-  }
-  
-  .blog-content img.blog-image.center {
-    margin-left: auto;
-    margin-right: auto;
-  }
+  display: block;
+  max-width: 100%;
+  margin: 2rem auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.blog-content img.blog-image.medium {
+  max-width: 85%;
+}
+
+.blog-content img.blog-image.small {
+  max-width: 65%;
+}
+
+.blog-content blockquote {
+  border-left: 4px solid #8b5cf6;
+  padding-left: 1rem;
+  margin-left: 0;
+  color: #a5b4fc; /* Light color for dark background */
+  font-style: italic;
+}
+
+.blog-content p {
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+  color: #e0e7ff; /* Ensure paragraphs are light colored for visibility on dark backgrounds */
+}
+
+.blog-content h2 {
+  font-size: 1.875rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
+  font-weight: 700;
+  color: #e0e7ff; /* Lighter color for headings */
+}
+
+.blog-content h3 {
+  font-size: 1.5rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #c7d2fe;
+}
+
+.blog-content ul, .blog-content ol {
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+  color: #e0e7ff; /* Ensure list text is visible */
+}
+
+.blog-content li {
+  margin-bottom: 0.5rem;
+  color: #e0e7ff; /* Explicitly set list item color */
+}
+
+.blog-content a {
+  color: #93c5fd;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.blog-content a:hover {
+  color: #60a5fa;
+}
+
+/* Caption styles */
+.blog-content figure {
+  margin: 2rem auto;
+}
+
+.blog-content figcaption {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #9ca3af;
+  margin-top: 0.5rem;
+}
+
+/* Code block styles */
+.blog-content pre {
+  background-color: #1f2937;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.blog-content code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.875rem;
+  padding: 0.125rem 0.25rem;
+  background-color: rgba(31, 41, 55, 0.5);
+  border-radius: 0.25rem;
+  color: #e5e7eb; /* Ensure code text is visible */
+}
+
+.blog-content pre code {
+  padding: 0;
+  background-color: transparent;
+}
+
+/* Medium-style image zoom on hover */
+.blog-content img.blog-image {
+  transition: transform 0.3s ease;
+}
+
+.blog-content img.blog-image:hover {
+  transform: scale(1.02);
+}
+
+/* Image positioning classes */
+.blog-content img.blog-image.left {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.blog-content img.blog-image.right {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.blog-content img.blog-image.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Fix for general text in the blog content */
+.blog-content {
+  color: #e0e7ff; /* Default text color for all content in the blog */
+}
+
+/* Ensure the blog post detail content inherits the correct text color */
+.prose-invert {
+  --tw-prose-body: #e0e7ff;
+  --tw-prose-headings: #e0e7ff;
+  --tw-prose-lead: #c7d2fe;
+  --tw-prose-links: #93c5fd;
+  --tw-prose-bold: #ffffff;
+  --tw-prose-counters: #9ca3af;
+  --tw-prose-bullets: #9ca3af;
+  --tw-prose-hr: #374151;
+  --tw-prose-quotes: #a5b4fc;
+  --tw-prose-quote-borders: #8b5cf6;
+  --tw-prose-captions: #9ca3af;
+  --tw-prose-code: #e5e7eb;
+  --tw-prose-pre-code: #e5e7eb;
+  --tw-prose-pre-bg: #1f2937;
+  --tw-prose-th-borders: #374151;
+  --tw-prose-td-borders: #374151;
+}

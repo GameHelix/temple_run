@@ -66,7 +66,12 @@ export default function BlogPostDetail({ slug }: BlogPostProps) {
   // Function to format the HTML content - add custom classes to images
   const formatContent = (content: string) => {
     // Add 'blog-image' class to all images in the content
-    return content.replace(/<img /g, '<img class="blog-image" ');
+    // This ensures each <img> in the blog post content gets the proper class
+    const withImageClasses = content.replace(/<img /g, '<img class="blog-image" ');
+    
+    // You could add more HTML transformations here if needed
+    
+    return withImageClasses;
   };
 
   // Function to handle image load errors
@@ -177,7 +182,8 @@ export default function BlogPostDetail({ slug }: BlogPostProps) {
             )}
           </header>
           
-          <div className="prose prose-invert max-w-none prose-indigo prose-lg blog-content">
+          {/* Added stronger styling classes to ensure content is visible */}
+          <div className="prose prose-invert max-w-none prose-indigo prose-lg blog-content text-indigo-100">
             <div dangerouslySetInnerHTML={{ __html: formatContent(post.content) }} />
           </div>
         </div>
