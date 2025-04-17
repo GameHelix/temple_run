@@ -13,7 +13,7 @@ const EnhancedRichTextEditor: React.FC<EnhancedRichTextEditorProps> = ({
   placeholder = 'Write your content here...' 
 }) => {
   const editorRef = useRef<HTMLDivElement>(null);
-  const [content, setContent] = useState(initialValue);
+  const [_, setContent] = useState(initialValue); // Use underscore to indicate intentionally unused variable
   const [showFloatingToolbar, setShowFloatingToolbar] = useState(false);
   const [selectionPosition, setSelectionPosition] = useState({ top: 0, left: 0 });
   
@@ -33,8 +33,8 @@ const EnhancedRichTextEditor: React.FC<EnhancedRichTextEditorProps> = ({
     }
   };
 
-  // Format document with execCommand
-  const formatDoc = (command: string, value: string | null = null) => {
+  // Format document with execCommand - fixed to handle null vs undefined correctly
+  const formatDoc = (command: string, value?: string) => {
     document.execCommand(command, false, value);
     handleInput();
     if (editorRef.current) {
@@ -357,7 +357,7 @@ const EnhancedRichTextEditor: React.FC<EnhancedRichTextEditorProps> = ({
             className="p-1 text-indigo-300 hover:bg-gray-700 rounded-full"
             title="Highlight"
           >
-            <span className="inline-block w-4 h-4 bg-yellow-200 rounded"></span>
+            <span className="inline-block w-4 h-4 bg-yellow-200 rounded" aria-hidden="true"></span>
           </button>
         </div>
       )}
