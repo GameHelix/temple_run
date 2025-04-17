@@ -66,12 +66,7 @@ export default function BlogPostDetail({ slug }: BlogPostProps) {
   // Function to format the HTML content - add custom classes to images
   const formatContent = (content: string) => {
     // Add 'blog-image' class to all images in the content
-    // This ensures each <img> in the blog post content gets the proper class
-    const withImageClasses = content.replace(/<img /g, '<img class="blog-image" ');
-    
-    // You could add more HTML transformations here if needed
-    
-    return withImageClasses;
+    return content.replace(/<img /g, '<img class="blog-image" ');
   };
 
   // Function to handle image load errors
@@ -120,8 +115,8 @@ export default function BlogPostDetail({ slug }: BlogPostProps) {
       </Link>
       
       <div className="bg-gray-800/60 backdrop-blur-sm border border-gray-700 rounded-lg overflow-hidden shadow-lg">
-        {/* Featured image - ENHANCED: better error handling and fallback */}
-        {post.imageUrl && !imageError && (
+        {/* Featured image with standardized height */}
+        {post.imageUrl && !imageError ? (
           <div className="w-full h-72 md:h-96 relative">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
@@ -130,6 +125,12 @@ export default function BlogPostDetail({ slug }: BlogPostProps) {
               className="w-full h-full object-cover"
               onError={handleImageError}
             />
+          </div>
+        ) : (
+          <div className="w-full h-72 md:h-80 bg-gray-700/50 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
           </div>
         )}
         
@@ -170,20 +171,11 @@ export default function BlogPostDetail({ slug }: BlogPostProps) {
                 >
                   Delete
                 </button>
-                {post.imageUrl && (
-                  <div className="ml-4 text-xs text-indigo-300">
-                    {imageError ? 
-                      <span className="text-yellow-400">Image failed to load</span> : 
-                      <span>Image URL: {post.imageUrl.substring(0, 30)}...</span>
-                    }
-                  </div>
-                )}
               </div>
             )}
           </header>
           
-          {/* Added stronger styling classes to ensure content is visible */}
-          <div className="prose prose-invert max-w-none prose-indigo prose-lg blog-content text-indigo-100">
+          <div className="prose prose-invert max-w-none prose-indigo prose-lg blog-content">
             <div dangerouslySetInnerHTML={{ __html: formatContent(post.content) }} />
           </div>
         </div>
