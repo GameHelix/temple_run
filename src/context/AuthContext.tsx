@@ -62,20 +62,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(true);
         
         // Try to get token from localStorage or cookie
-        const localToken = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
-        const cookieToken = getCookie('auth_token');
+        const localToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+        const cookieToken = getCookie('token');
         const token = localToken || cookieToken;
-        
+
         if (token) {
           // Set default Authorization header for all requests
           axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-          
+
           // Make sure tokens are synced between localStorage and cookies
           if (typeof window !== 'undefined') {
             if (!localToken && cookieToken) {
-              localStorage.setItem('auth_token', cookieToken);
+              localStorage.setItem('token', cookieToken);
             } else if (localToken && !cookieToken) {
-              setCookie('auth_token', localToken);
+              setCookie('token', localToken);
             }
           }
           
@@ -90,9 +90,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         console.error('Auth check error:', err);
         // Clear auth data on error
         if (typeof window !== 'undefined') {
-          localStorage.removeItem('auth_token');
+          localStorage.removeItem('token');
         }
-        deleteCookie('auth_token');
+        deleteCookie('token');
         axios.defaults.headers.common['Authorization'] = '';
       } finally {
         setLoading(false);
@@ -108,8 +108,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const requestInterceptor = axios.interceptors.request.use(
       (config) => {
         // Try to get token from localStorage or cookie
-        const localToken = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
-        const cookieToken = getCookie('auth_token');
+        const localToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+        const cookieToken = getCookie('token');
         const token = localToken || cookieToken;
         
         if (token && config.headers) {
@@ -131,9 +131,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (error.response && error.response.status === 401) {
           // Clear auth data
           if (typeof window !== 'undefined') {
-            localStorage.removeItem('auth_token');
+            localStorage.removeItem('token');
           }
-          deleteCookie('auth_token');
+          deleteCookie('token');
           setUser(null);
           
           // Redirect to login if not already there
@@ -159,17 +159,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       const response = await axios.post('/api/auth/signin', data);
       const result = response.data;
-      
+
       if (result.success && result.token) {
         // Store token in both localStorage and as a cookie
         if (typeof window !== 'undefined') {
-          localStorage.setItem('auth_token', result.token);
+          localStorage.setItem('token', result.token);
         }
-        setCookie('auth_token', result.token);
-        
+        setCookie('token', result.token);
+
         // Set default Authorization header for all requests
         axios.defaults.headers.common['Authorization'] = `Bearer ${result.token}`;
-        
+
         setUser(result.user);
         console.log("User signed in:", result.user);
       } else {
@@ -198,13 +198,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (result.success && result.token) {
         // Store token in both localStorage and as a cookie
         if (typeof window !== 'undefined') {
-          localStorage.setItem('auth_token', result.token);
+          localStorage.setItem('token', result.token);
         }
-        setCookie('auth_token', result.token);
-        
+        setCookie('token', result.token);
+
         // Set default Authorization header for all requests
         axios.defaults.headers.common['Authorization'] = `Bearer ${result.token}`;
-        
+
         setUser(result.user);
         console.log("User signed up:", result.user);
       } else {
@@ -224,9 +224,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = () => {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('auth_token');
+      localStorage.removeItem('token');
     }
-    deleteCookie('auth_token');
+    deleteCookie('token');
     axios.defaults.headers.common['Authorization'] = '';
     setUser(null);
   };
