@@ -377,22 +377,30 @@ export async function verifyDoctorAccount(doctorId: string, adminId: string): Pr
   try {
     // First check if the requester is an admin
     const adminCheck = await isAdmin(adminId);
-    
+
     if (!adminCheck) {
       console.error('Non-admin user attempted to verify doctor account');
       return false;
     }
-    
-    // Update the doctor's account (for now just making sure they have the doctor role)
+
+    console.log('Verifying doctor with ID:', doctorId);
+
+    // Update the doctor_profiles table to set is_verified = true
     const result = await query(
-      `UPDATE randevu.users
-       SET role = 'doctor', updated_at = CURRENT_TIMESTAMP
-       WHERE id = $1 AND role = 'doctor'
+      `UPDATE randevu.doctor_profiles
+       SET is_verified = true, updated_at = CURRENT_TIMESTAMP
+       WHERE user_id = $1
        RETURNING id`,
       [doctorId]
     );
-    
-    return result.rows.length > 0;
+
+    if (result.rows.length > 0) {
+      console.log('Doctor verified successfully:', doctorId);
+      return true;
+    } else {
+      console.log('Doctor profile not found for user:', doctorId);
+      return false;
+    }
   } catch (error) {
     console.error('Error verifying doctor account:', error);
     return false;
@@ -401,14 +409,22 @@ export async function verifyDoctorAccount(doctorId: string, adminId: string): Pr
 
 /**
  * Get all users with doctor role (for admin verification)
+ * Only returns doctors who are NOT verified yet
  */
 export async function getAllDoctors(): Promise<User[]> {
   try {
+    // Get doctors who have not been verified yet (is_verified = false in doctor_profiles)
+    // OR doctors who don't have a profile yet
     const result = await query(
-      'SELECT id, name, email, role, created_at, updated_at FROM randevu.users WHERE role = $1',
-      ['doctor']
+      `SELECT DISTINCT u.id, u.name, u.email, u.role, u.created_at, u.updated_at
+       FROM randevu.users u
+       LEFT JOIN randevu.doctor_profiles dp ON u.id = dp.user_id
+       WHERE u.role = 'doctor'
+       AND (dp.is_verified = false OR dp.id IS NULL)
+       ORDER BY u.created_at DESC`,
+      []
     );
-    
+
     return result.rows.map(row => ({
       id: row.id,
       name: row.name,
