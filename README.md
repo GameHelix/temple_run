@@ -69,25 +69,30 @@ A modern, full-stack doctor appointment booking platform built with Next.js, Typ
    npm install
    ```
 
-3. Create `.env.local` file:
+3. Set up environment variables:
+   ```bash
+   cp .env.example .env
+   ```
+
+   Then edit `.env` and fill in your values:
    ```env
-   # PostgreSQL Database
-   DB_HOST=your_db_host
-   DB_PORT=5432
-   DB_NAME=your_db_name
-   DB_USER=your_db_username
-   DB_PASSWORD=your_db_password
+   # PostgreSQL Database Connection String
+   DATABASE_URL="postgresql://username:password@host:port/database?sslmode=require"
 
    # JWT Secret (generate a strong random string)
-   JWT_SECRET=your_jwt_secret_key_here
+   JWT_SECRET="your_jwt_secret_key_here"
+
+   # Application URL
+   NEXT_PUBLIC_APP_URL="http://localhost:3000"
 
    # Admin Creation Key (for creating admin accounts)
-   ADMIN_CREATION_KEY=your_secure_admin_key_here
+   ADMIN_CREATION_KEY="your_secure_admin_key_here"
    ```
 
 4. Initialize the database:
    ```bash
-   psql -U your_db_username -d your_db_name -f scripts/scripts.sql
+   # Run the setup script to create schema and tables
+   node scripts/setup-db.js
    ```
 
 5. Run the development server:
@@ -235,17 +240,16 @@ For paid consultations, consider:
 
 ## Environment Variables
 
+See `.env.example` for a complete list. Required variables:
+
 ```env
 # Required
-DB_HOST=              # PostgreSQL host
-DB_PORT=5432          # PostgreSQL port
-DB_NAME=              # Database name
-DB_USER=              # Database user
-DB_PASSWORD=          # Database password
+DATABASE_URL=         # PostgreSQL connection string
 JWT_SECRET=           # Secret for JWT tokens
+NEXT_PUBLIC_APP_URL=  # Base URL of your application
 
 # Optional
-ADMIN_CREATION_KEY=   # Key for creating admin accounts
+ADMIN_CREATION_KEY=   # Key for creating admin accounts (default: secure-admin-key)
 ```
 
 ## Security
