@@ -86,11 +86,13 @@ export default function ProfilePage() {
                   <dt className="text-sm font-medium text-indigo-300">Account type</dt>
                   <dd className="mt-1 text-sm sm:mt-0 sm:col-span-2">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      isDoctor()
+                      user.role === 'admin'
+                        ? 'bg-purple-100 text-purple-800'
+                        : user.role === 'doctor'
                         ? 'bg-green-100 text-green-800'
                         : 'bg-blue-100 text-blue-800'
                     }`}>
-                      {user.role === 'doctor' ? 'Doctor' : 'Patient'}
+                      {user.role === 'admin' ? 'Administrator' : user.role === 'doctor' ? 'Doctor' : 'Patient'}
                     </span>
                   </dd>
                 </div>
@@ -113,7 +115,31 @@ export default function ProfilePage() {
             </div>
             <div className="border-t border-gray-700 px-4 py-5 sm:px-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {isDoctor() ? (
+                {user.role === 'admin' ? (
+                  <>
+                    <div className="p-4 border border-gray-700 rounded-lg hover:bg-gray-700/40 transition cursor-pointer"
+                         onClick={() => router.push('/admin')}>
+                      <h3 className="text-lg font-medium text-indigo-200">Admin Dashboard</h3>
+                      <p className="mt-2 text-sm text-indigo-300">
+                        Manage the Randevu system and users
+                      </p>
+                    </div>
+                    <div className="p-4 border border-gray-700 rounded-lg hover:bg-gray-700/40 transition cursor-pointer"
+                         onClick={() => router.push('/admin/doctors')}>
+                      <h3 className="text-lg font-medium text-indigo-200">Verify Doctors</h3>
+                      <p className="mt-2 text-sm text-indigo-300">
+                        Review and verify doctor accounts
+                      </p>
+                    </div>
+                    <div className="p-4 border border-gray-700 rounded-lg hover:bg-gray-700/40 transition cursor-pointer"
+                         onClick={() => router.push('/doctors')}>
+                      <h3 className="text-lg font-medium text-indigo-200">Browse Doctors</h3>
+                      <p className="mt-2 text-sm text-indigo-300">
+                        View all doctors on the platform
+                      </p>
+                    </div>
+                  </>
+                ) : isDoctor() ? (
                   <>
                     <div className="p-4 border border-gray-700 rounded-lg hover:bg-gray-700/40 transition cursor-pointer"
                          onClick={() => router.push('/doctor/appointments')}>

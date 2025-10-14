@@ -16,6 +16,7 @@ export default function AdminDoctorsPage() {
   const [loadingDoctors, setLoadingDoctors] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [processingId, setProcessingId] = useState<string | null>(null);
 
   // Check if user is admin
   useEffect(() => {
@@ -44,31 +45,59 @@ export default function AdminDoctorsPage() {
     fetchDoctors();
   }, [user]);
 
+  // Auto-dismiss messages after 5 seconds
+  useEffect(() => {
+    if (successMessage || error) {
+      const timer = setTimeout(() => {
+        setSuccessMessage(null);
+        setError(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage, error]);
+
   const handleVerify = async (doctorId: string) => {
     try {
       setError(null);
       setSuccessMessage(null);
-      
+      setProcessingId(doctorId);
+
       const response = await axios.post('/api/admin/doctors/verify', { doctorId });
-      
+
       if (response.data.success) {
         setSuccessMessage('Doctor account verified successfully');
-        // Remove the verified doctor from the list
-        setDoctors(doctors.filter(doctor => doctor.id !== doctorId));
+        // Remove the verified doctor from the list after a short delay
+        setTimeout(() => {
+          setDoctors(doctors.filter(doctor => doctor.id !== doctorId));
+          setProcessingId(null);
+        }, 1000);
       } else {
         setError(response.data.message || 'Failed to verify doctor account');
+        setProcessingId(null);
       }
     } catch (error) {
       console.error('Error verifying doctor:', error);
       setError('Failed to verify doctor account');
+      setProcessingId(null);
     }
   };
 
   const handleReject = async (doctorId: string) => {
+    if (!confirm('Are you sure you want to reject this doctor account?')) {
+      return;
+    }
+
+    setProcessingId(doctorId);
+    setError(null);
+    setSuccessMessage(null);
+
     // In a real application, you would implement this to reject the doctor's application
     // For now, we'll just remove them from the list
-    setDoctors(doctors.filter(doctor => doctor.id !== doctorId));
-    setSuccessMessage('Doctor account rejected');
+    setTimeout(() => {
+      setDoctors(doctors.filter(doctor => doctor.id !== doctorId));
+      setSuccessMessage('Doctor account rejected');
+      setProcessingId(null);
+    }, 500);
   };
 
   if (loading || loadingDoctors) {
@@ -102,14 +131,24 @@ export default function AdminDoctorsPage() {
         </div>
 
         {error && (
-          <div className="bg-red-900/50 border-l-4 border-red-500 text-red-100 p-4 mb-6">
-            <p>{error}</p>
+          <div className="bg-red-900/50 border-l-4 border-red-500 text-red-100 p-4 mb-6 animate-slide-down">
+            <div className="flex justify-between items-center">
+              <p>{error}</p>
+              <button onClick={() => setError(null)} className="text-red-200 hover:text-red-100">
+                <XCircle className="h-5 w-5" />
+              </button>
+            </div>
           </div>
         )}
 
         {successMessage && (
-          <div className="bg-green-900/50 border-l-4 border-green-500 text-green-100 p-4 mb-6">
-            <p>{successMessage}</p>
+          <div className="bg-green-900/50 border-l-4 border-green-500 text-green-100 p-4 mb-6 animate-slide-down">
+            <div className="flex justify-between items-center">
+              <p>{successMessage}</p>
+              <button onClick={() => setSuccessMessage(null)} className="text-green-200 hover:text-green-100">
+                <CheckCircle className="h-5 w-5" />
+              </button>
+            </div>
           </div>
         )}
 
@@ -158,20 +197,31 @@ export default function AdminDoctorsPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <div className="flex justify-end space-x-3">
-                            <button
-                              onClick={() => handleVerify(doctor.id)}
-                              className="text-green-500 hover:text-green-400 flex items-center"
-                            >
-                              <CheckCircle className="h-4 w-4 mr-1" />
-                              Verify
-                            </button>
-                            <button
-                              onClick={() => handleReject(doctor.id)}
-                              className="text-red-500 hover:text-red-400 flex items-center"
-                            >
-                              <XCircle className="h-4 w-4 mr-1" />
-                              Reject
-                            </button>
+                            {processingId === doctor.id ? (
+                              <div className="flex items-center text-indigo-400">
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-indigo-400 mr-2"></div>
+                                Processing...
+                              </div>
+                            ) : (
+                              <>
+                                <button
+                                  onClick={() => handleVerify(doctor.id)}
+                                  disabled={processingId !== null}
+                                  className="text-green-500 hover:text-green-400 flex items-center disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105"
+                                >
+                                  <CheckCircle className="h-4 w-4 mr-1" />
+                                  Verify
+                                </button>
+                                <button
+                                  onClick={() => handleReject(doctor.id)}
+                                  disabled={processingId !== null}
+                                  className="text-red-500 hover:text-red-400 flex items-center disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105"
+                                >
+                                  <XCircle className="h-4 w-4 mr-1" />
+                                  Reject
+                                </button>
+                              </>
+                            )}
                           </div>
                         </td>
                       </tr>
