@@ -34,23 +34,35 @@ export default function Navbar() {
   };
 
   // Build navigation items based on user role
-  const navItems = [
-    { label: 'Home', href: '/' },
-    { label: 'Find Doctors', href: '/doctors' },
-  ];
+  let navItems: { label: string; href: string }[] = [];
 
-  // Add role-specific nav items
-  if (user) {
-    if (user.role === 'patient') {
-      navItems.push({ label: 'My Appointments', href: '/appointments' });
-    } else if (user.role === 'doctor') {
-      navItems.push(
-        { label: 'Appointments', href: '/doctor/appointments' },
-        { label: 'Schedule', href: '/doctor/schedule' }
-      );
-    } else if (user.role === 'admin') {
-      navItems.push({ label: 'Admin', href: '/admin' });
-    }
+  if (!user) {
+    // Guest users
+    navItems = [
+      { label: 'Home', href: '/' },
+      { label: 'Find Doctors', href: '/doctors' },
+    ];
+  } else if (user.role === 'patient') {
+    // Patient navigation
+    navItems = [
+      { label: 'Home', href: '/' },
+      { label: 'Find Doctors', href: '/doctors' },
+      { label: 'My Appointments', href: '/appointments' },
+    ];
+  } else if (user.role === 'doctor') {
+    // Doctor navigation (no "Find Doctors")
+    navItems = [
+      { label: 'Home', href: '/' },
+      { label: 'Appointments', href: '/doctor/appointments' },
+      { label: 'Schedule', href: '/doctor/schedule' },
+    ];
+  } else if (user.role === 'admin') {
+    // Admin navigation
+    navItems = [
+      { label: 'Home', href: '/' },
+      { label: 'Find Doctors', href: '/doctors' },
+      { label: 'Admin', href: '/admin' },
+    ];
   }
 
   return (
