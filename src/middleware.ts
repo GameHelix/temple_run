@@ -5,24 +5,24 @@ import { verifyTokenForEdge } from './lib/edge-jwt';
 
 // Add routes that should be protected here
 const PROTECTED_ROUTES = [
-  '/dashboard',
-  '/chat',
   '/profile',
-  '/api/chat',
+  '/appointments',
+  '/api/appointments',
+  '/api/availability',
   '/api/auth/me'
 ];
 
 // Routes that only admins can access
 const ADMIN_ONLY_ROUTES = [
   '/admin',
-  '/admin/blog',
   '/admin/doctors'
 ];
 
 // Routes that only doctors can access
 const DOCTOR_ONLY_ROUTES = [
-  '/doctor',
-  '/doctor/dashboard'
+  '/doctor/appointments',
+  '/doctor/schedule',
+  '/api/doctors/profile'
 ];
 
 export function middleware(request: NextRequest) {
@@ -134,8 +134,8 @@ export const config = {
     // - public folder
     // - auth routes (allow unauthenticated access)
     '/((?!_next/static|_next/image|favicon.ico|public|auth).*)',
-    '/api/chat/:path*',
-    '/api/blog/:path*',
+    '/api/appointments/:path*',
+    '/api/availability/:path*',
     '/api/admin/:path*',
   ],
 };

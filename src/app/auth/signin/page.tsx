@@ -42,10 +42,10 @@ export default function SignInPage() {
           <Heart className="h-12 w-12 text-indigo-400" />
         </Link>
         <h1 className="mt-6 text-center text-3xl font-bold text-white">
-          Healthcare Assistant
+          Randevu
         </h1>
         <p className="mt-2 text-center text-lg text-indigo-200">
-          Sign in to access your healthcare assistance
+          Sign in to manage your appointments
         </p>
       </div>
 

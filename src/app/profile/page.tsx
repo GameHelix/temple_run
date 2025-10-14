@@ -86,11 +86,11 @@ export default function ProfilePage() {
                   <dt className="text-sm font-medium text-indigo-300">Account type</dt>
                   <dd className="mt-1 text-sm sm:mt-0 sm:col-span-2">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      isDoctor() 
-                        ? 'bg-green-100 text-green-800' 
+                      isDoctor()
+                        ? 'bg-green-100 text-green-800'
                         : 'bg-blue-100 text-blue-800'
                     }`}>
-                      {user.role === 'doctor' ? 'Healthcare Provider' : 'Patient'}
+                      {user.role === 'doctor' ? 'Doctor' : 'Patient'}
                     </span>
                   </dd>
                 </div>
@@ -106,36 +106,47 @@ export default function ProfilePage() {
 
           <div className="mt-8 bg-gray-800/60 backdrop-blur-sm shadow overflow-hidden rounded-lg border border-gray-700">
             <div className="px-4 py-5 sm:px-6">
-              <h2 className="text-xl font-medium text-indigo-100">Healthcare Services</h2>
+              <h2 className="text-xl font-medium text-indigo-100">Quick Actions</h2>
               <p className="mt-1 max-w-2xl text-sm text-indigo-300">
-                Your healthcare assistant features
+                Access your appointment features
               </p>
             </div>
             <div className="border-t border-gray-700 px-4 py-5 sm:px-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="p-4 border border-gray-700 rounded-lg hover:bg-gray-700/40 transition cursor-pointer" 
-                     onClick={() => router.push('/chat')}>
-                  <h3 className="text-lg font-medium text-indigo-200">Chat with Assistant</h3>
-                  <p className="mt-2 text-sm text-indigo-300">
-                    Get answers to your health questions from our AI assistant
-                  </p>
-                </div>
-                
                 {isDoctor() ? (
-                  <div className="p-4 border border-gray-700 rounded-lg hover:bg-gray-700/40 transition cursor-pointer"
-                       onClick={() => router.push('/doctor/dashboard')}>
-                    <h3 className="text-lg font-medium text-indigo-200">Provider Dashboard</h3>
-                    <p className="mt-2 text-sm text-indigo-300">
-                      Access your provider dashboard and patient information
-                    </p>
-                  </div>
+                  <>
+                    <div className="p-4 border border-gray-700 rounded-lg hover:bg-gray-700/40 transition cursor-pointer"
+                         onClick={() => router.push('/doctor/appointments')}>
+                      <h3 className="text-lg font-medium text-indigo-200">Manage Appointments</h3>
+                      <p className="mt-2 text-sm text-indigo-300">
+                        View and manage your patient appointments
+                      </p>
+                    </div>
+                    <div className="p-4 border border-gray-700 rounded-lg hover:bg-gray-700/40 transition cursor-pointer"
+                         onClick={() => router.push('/doctor/schedule')}>
+                      <h3 className="text-lg font-medium text-indigo-200">Set Availability</h3>
+                      <p className="mt-2 text-sm text-indigo-300">
+                        Configure your weekly availability schedule
+                      </p>
+                    </div>
+                  </>
                 ) : (
-                  <div className="p-4 border border-gray-700 rounded-lg hover:bg-gray-700/40 transition cursor-pointer">
-                    <h3 className="text-lg font-medium text-indigo-200">Health Records</h3>
-                    <p className="mt-2 text-sm text-indigo-300">
-                      View and manage your health information (Coming soon)
-                    </p>
-                  </div>
+                  <>
+                    <div className="p-4 border border-gray-700 rounded-lg hover:bg-gray-700/40 transition cursor-pointer"
+                         onClick={() => router.push('/doctors')}>
+                      <h3 className="text-lg font-medium text-indigo-200">Find Doctors</h3>
+                      <p className="mt-2 text-sm text-indigo-300">
+                        Browse verified doctors and book appointments
+                      </p>
+                    </div>
+                    <div className="p-4 border border-gray-700 rounded-lg hover:bg-gray-700/40 transition cursor-pointer"
+                         onClick={() => router.push('/appointments')}>
+                      <h3 className="text-lg font-medium text-indigo-200">My Appointments</h3>
+                      <p className="mt-2 text-sm text-indigo-300">
+                        View and manage your upcoming appointments
+                      </p>
+                    </div>
+                  </>
                 )}
               </div>
             </div>

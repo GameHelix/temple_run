@@ -30,10 +30,10 @@ export default function SignUpPage() {
           <Heart className="h-12 w-12 text-indigo-400" />
         </Link>
         <h1 className="mt-6 text-center text-3xl font-bold text-white">
-          Healthcare Assistant
+          Randevu
         </h1>
         <p className="mt-2 text-center text-lg text-indigo-200">
-          Create an account for personalized healthcare assistance
+          Create an account to book appointments with verified doctors
         </p>
       </div>
 

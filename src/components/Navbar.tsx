@@ -2,9 +2,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { Calendar, Menu, X, User, LogOut, Stethoscope, Clock } from 'lucide-react';
+import { Calendar, Menu, X, User, LogOut } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 export default function Navbar() {

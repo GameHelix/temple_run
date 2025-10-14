@@ -6,12 +6,11 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
 import { User } from '@/types/user';
-import { 
-  PenTool, 
-  UserCheck, 
-  Settings, 
-  Users, 
-  Grid, 
+import {
+  UserCheck,
+  Settings,
+  Users,
+  Grid,
   AlertTriangle
 } from 'lucide-react';
 
@@ -19,7 +18,6 @@ export default function AdminDashboard() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [doctors, setDoctors] = useState<User[]>([]);
-  const [loadingDoctors, setLoadingDoctors] = useState(false);
 
   // Check if user is admin
   useEffect(() => {
@@ -33,15 +31,12 @@ export default function AdminDashboard() {
     const fetchDoctors = async () => {
       if (user?.role === 'admin') {
         try {
-          setLoadingDoctors(true);
           const response = await axios.get('/api/admin/doctors');
           if (response.data.success) {
             setDoctors(response.data.doctors || []);
           }
         } catch (error) {
           console.error('Error fetching doctors:', error);
-        } finally {
-          setLoadingDoctors(false);
         }
       }
     };
@@ -74,7 +69,7 @@ export default function AdminDashboard() {
             <div>
               <h2 className="text-2xl font-bold text-indigo-100">Admin Dashboard</h2>
               <p className="mt-1 max-w-2xl text-sm text-indigo-300">
-                Manage your healthcare application
+                Manage Randevu appointment system
               </p>
             </div>
             <div className="rounded-full bg-purple-100 px-3 py-1">
@@ -85,17 +80,6 @@ export default function AdminDashboard() {
 
         {/* Dashboard content */}
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {/* Blog Management Card */}
-          <Link href="/admin/blog" className="bg-gray-800/60 backdrop-blur-sm rounded-lg shadow p-6 border border-gray-700 hover:bg-gray-700/60 transition-colors">
-            <div className="flex flex-col items-center text-center">
-              <PenTool className="h-12 w-12 text-indigo-400 mb-4" />
-              <h3 className="text-lg font-medium text-indigo-100 mb-2">Blog Management</h3>
-              <p className="text-sm text-indigo-300">
-                Create, edit and manage blog posts
-              </p>
-            </div>
-          </Link>
-
           {/* Doctor Verification Card */}
           <Link href="/admin/doctors" className="bg-gray-800/60 backdrop-blur-sm rounded-lg shadow p-6 border border-gray-700 hover:bg-gray-700/60 transition-colors">
             <div className="flex flex-col items-center text-center">
@@ -167,13 +151,7 @@ export default function AdminDashboard() {
             <h2 className="text-xl font-medium text-indigo-100">Quick Actions</h2>
           </div>
           <div className="border-t border-gray-700 px-4 py-5 sm:px-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Link
-                href="/admin/blog/new"
-                className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg text-center transition"
-              >
-                Create New Blog Post
-              </Link>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Link
                 href="/admin/doctors"
                 className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg text-center transition"
@@ -181,10 +159,10 @@ export default function AdminDashboard() {
                 Verify Doctor Accounts
               </Link>
               <button
-                onClick={() => router.push('/chat')}
+                onClick={() => router.push('/doctors')}
                 className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-center transition"
               >
-                Access Healthcare Chat
+                Browse All Doctors
               </button>
             </div>
           </div>

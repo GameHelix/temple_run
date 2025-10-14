@@ -1,15 +1,10 @@
 // src/lib/db.ts
 import { Pool } from 'pg';
 
-// Create a new pool instance using environment variables with SSL enabled for Neon
+// Create a new pool instance using DATABASE_URL connection string
+// Neon URL already includes SSL settings in the connection string
 const pool = new Pool({
-  host: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT || '5432'),
-  database: process.env.DB_NAME,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  ssl: true, // Always enable SSL for Neon database
-  options: '-c search_path=randevu,public' // Use randevu schema by default
+  connectionString: process.env.DATABASE_URL
 });
 
 // Helper function to get a client from the pool

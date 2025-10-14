@@ -120,5 +120,5 @@ ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO randevu.doctor_profiles (user_id, specialization, bio, education, experience_years, consultation_fee, clinic_name, clinic_address, city, is_verified) VALUES
   ('22222222-2222-2222-2222-222222222222', 'Cardiology', 'Experienced cardiologist specializing in heart disease prevention and treatment.', 'MD from Harvard Medical School', 15, 150.00, 'Heart Care Clinic', '123 Medical Plaza, Suite 200', 'Boston', true),
-  ('33333333-3333-3333-3333-333333333333', 'Pediatrics', 'Board-certified pediatrician dedicated to children\'s health and wellness.', 'MD from Johns Hopkins University', 10, 100.00, 'Children\'s Health Center', '456 Kids Avenue', 'Baltimore', true)
+  ('33333333-3333-3333-3333-333333333333', 'Pediatrics', 'Board-certified pediatrician dedicated to children''s health and wellness.', 'MD from Johns Hopkins University', 10, 100.00, 'Children''s Health Center', '456 Kids Avenue', 'Baltimore', true)
 ON CONFLICT (user_id) DO NOTHING;
