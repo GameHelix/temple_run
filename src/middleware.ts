@@ -15,7 +15,8 @@ const PROTECTED_ROUTES = [
 // Routes that only admins can access
 const ADMIN_ONLY_ROUTES = [
   '/admin',
-  '/admin/doctors'
+  '/admin/doctors',
+  '/admin/users'
 ];
 
 // Routes that only doctors can access
@@ -45,7 +46,7 @@ export function middleware(request: NextRequest) {
   
   if (isProtectedRoute || isDoctorRoute || isAdminRoute) {
     // Get the token from cookies
-    const cookieToken = request.cookies.get('auth_token')?.value;
+    const cookieToken = request.cookies.get('token')?.value;
     
     // Get token from Authorization header as fallback
     const authHeader = request.headers.get('Authorization');
@@ -95,7 +96,7 @@ export function middleware(request: NextRequest) {
       if (!cookieToken && headerToken) {
         // Set the cookie for future requests if it's missing but we have a header token
         response.cookies.set({
-          name: 'auth_token',
+          name: 'token',
           value: headerToken,
           httpOnly: true,
           path: '/',
