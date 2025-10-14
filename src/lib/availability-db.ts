@@ -13,7 +13,7 @@ export async function createAvailabilitySchedule(
   const { dayOfWeek, startTime, endTime, isAvailable = true } = scheduleData;
 
   const result = await query(
-    `INSERT INTO availability_schedule (
+    `INSERT INTO randevu.availability_schedule (
       id, doctor_id, day_of_week, start_time, end_time, is_available
     ) VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING *`,
@@ -30,7 +30,7 @@ export async function getDoctorAvailability(
   doctorId: string,
   dayOfWeek?: number
 ): Promise<AvailabilitySchedule[]> {
-  let queryText = 'SELECT * FROM availability_schedule WHERE doctor_id = $1';
+  let queryText = 'SELECT * FROM randevu.availability_schedule WHERE doctor_id = $1';
   const params: any[] = [doctorId];
 
   if (dayOfWeek !== undefined) {
@@ -89,7 +89,7 @@ export async function updateAvailabilitySchedule(
   params.push(scheduleId);
 
   const result = await query(
-    `UPDATE availability_schedule
+    `UPDATE randevu.availability_schedule
      SET ${setClauses.join(', ')}
      WHERE id = $${paramIndex}
      RETURNING *`,
@@ -107,7 +107,7 @@ export async function updateAvailabilitySchedule(
  * Delete availability schedule
  */
 export async function deleteAvailabilitySchedule(scheduleId: string): Promise<void> {
-  await query('DELETE FROM availability_schedule WHERE id = $1', [scheduleId]);
+  await query('DELETE FROM randevu.availability_schedule WHERE id = $1', [scheduleId]);
 }
 
 /**
@@ -117,7 +117,7 @@ export async function deleteDoctorDayAvailability(
   doctorId: string,
   dayOfWeek: number
 ): Promise<void> {
-  await query('DELETE FROM availability_schedule WHERE doctor_id = $1 AND day_of_week = $2', [
+  await query('DELETE FROM randevu.availability_schedule WHERE doctor_id = $1 AND day_of_week = $2', [
     doctorId,
     dayOfWeek,
   ]);
@@ -163,7 +163,7 @@ export async function isDoctorAvailable(
   const dayOfWeek = dateObj.getDay();
 
   const result = await query(
-    `SELECT id FROM availability_schedule
+    `SELECT id FROM randevu.availability_schedule
      WHERE doctor_id = $1
      AND day_of_week = $2
      AND start_time <= $3
@@ -178,7 +178,7 @@ export async function isDoctorAvailable(
 
   // Check if there's already an appointment at this time
   const appointmentResult = await query(
-    `SELECT id FROM appointments
+    `SELECT id FROM randevu.appointments
      WHERE doctor_id = $1
      AND appointment_date = $2
      AND appointment_time = $3

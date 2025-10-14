@@ -20,7 +20,7 @@ export async function createAppointment(
 
   // Check if the time slot is already booked
   const existingAppointment = await query(
-    `SELECT id FROM appointments
+    `SELECT id FROM randevu.appointments
      WHERE doctor_id = $1
      AND appointment_date = $2
      AND appointment_time = $3
@@ -33,7 +33,7 @@ export async function createAppointment(
   }
 
   const result = await query(
-    `INSERT INTO appointments (
+    `INSERT INTO randevu.appointments (
       id, doctor_id, patient_id, appointment_date, appointment_time,
       status, patient_notes
     ) VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -48,7 +48,7 @@ export async function createAppointment(
  * Get appointment by ID
  */
 export async function getAppointmentById(appointmentId: string): Promise<Appointment | null> {
-  const result = await query('SELECT * FROM appointments WHERE id = $1', [appointmentId]);
+  const result = await query('SELECT * FROM randevu.appointments WHERE id = $1', [appointmentId]);
 
   if (result.rows.length === 0) {
     return null;
@@ -71,10 +71,10 @@ export async function getAppointmentWithDetails(
       p.name as patient_name,
       p.email as patient_email,
       p.phone as patient_phone
-    FROM appointments a
-    INNER JOIN users d ON a.doctor_id = d.id
-    LEFT JOIN doctor_profiles dp ON d.id = dp.user_id
-    INNER JOIN users p ON a.patient_id = p.id
+    FROM randevu.appointments a
+    INNER JOIN randevu.users d ON a.doctor_id = d.id
+    LEFT JOIN randevu.doctor_profiles dp ON d.id = dp.user_id
+    INNER JOIN randevu.users p ON a.patient_id = p.id
     WHERE a.id = $1`,
     [appointmentId]
   );
@@ -113,10 +113,10 @@ export async function getPatientAppointments(
       p.name as patient_name,
       p.email as patient_email,
       p.phone as patient_phone
-    FROM appointments a
-    INNER JOIN users d ON a.doctor_id = d.id
-    LEFT JOIN doctor_profiles dp ON d.id = dp.user_id
-    INNER JOIN users p ON a.patient_id = p.id
+    FROM randevu.appointments a
+    INNER JOIN randevu.users d ON a.doctor_id = d.id
+    LEFT JOIN randevu.doctor_profiles dp ON d.id = dp.user_id
+    INNER JOIN randevu.users p ON a.patient_id = p.id
     WHERE a.patient_id = $1
   `;
 
@@ -174,10 +174,10 @@ export async function getDoctorAppointments(
       p.name as patient_name,
       p.email as patient_email,
       p.phone as patient_phone
-    FROM appointments a
-    INNER JOIN users d ON a.doctor_id = d.id
-    LEFT JOIN doctor_profiles dp ON d.id = dp.user_id
-    INNER JOIN users p ON a.patient_id = p.id
+    FROM randevu.appointments a
+    INNER JOIN randevu.users d ON a.doctor_id = d.id
+    LEFT JOIN randevu.doctor_profiles dp ON d.id = dp.user_id
+    INNER JOIN randevu.users p ON a.patient_id = p.id
     WHERE a.doctor_id = $1
   `;
 
@@ -257,7 +257,7 @@ export async function updateAppointment(
   params.push(appointmentId);
 
   const result = await query(
-    `UPDATE appointments
+    `UPDATE randevu.appointments
      SET ${setClauses.join(', ')}
      WHERE id = $${paramIndex}
      RETURNING *`,
@@ -298,7 +298,7 @@ export async function getAvailableTimeSlots(
   // Get doctor's availability for this day
   const availabilityResult = await query(
     `SELECT start_time, end_time
-     FROM availability_schedule
+     FROM randevu.availability_schedule
      WHERE doctor_id = $1 AND day_of_week = $2 AND is_available = true`,
     [doctorId, dayOfWeek]
   );
@@ -310,7 +310,7 @@ export async function getAvailableTimeSlots(
   // Get all booked appointments for this date
   const bookedResult = await query(
     `SELECT appointment_time
-     FROM appointments
+     FROM randevu.appointments
      WHERE doctor_id = $1 AND appointment_date = $2 AND status NOT IN ('cancelled')`,
     [doctorId, date]
   );

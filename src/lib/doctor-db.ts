@@ -23,7 +23,7 @@ export async function upsertDoctorProfile(
   } = profileData;
 
   const result = await query(
-    `INSERT INTO doctor_profiles (
+    `INSERT INTO randevu.doctor_profiles (
       id, user_id, specialization, license_number, bio, education,
       experience_years, consultation_fee, clinic_name, clinic_address, city
     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
@@ -62,7 +62,7 @@ export async function upsertDoctorProfile(
  * Get doctor profile by user ID
  */
 export async function getDoctorProfileByUserId(userId: string): Promise<DoctorProfile | null> {
-  const result = await query('SELECT * FROM doctor_profiles WHERE user_id = $1', [userId]);
+  const result = await query('SELECT * FROM randevu.doctor_profiles WHERE user_id = $1', [userId]);
 
   if (result.rows.length === 0) {
     return null;
@@ -84,8 +84,8 @@ export async function getVerifiedDoctors(filters?: {
     SELECT
       u.id, u.name, u.email, u.phone, u.role, u.created_at, u.updated_at,
       dp.*
-    FROM users u
-    INNER JOIN doctor_profiles dp ON u.id = dp.user_id
+    FROM randevu.users u
+    INNER JOIN randevu.doctor_profiles dp ON u.id = dp.user_id
     WHERE u.role = 'doctor' AND dp.is_verified = true
   `;
 
@@ -160,8 +160,8 @@ export async function getDoctorWithProfile(userId: string): Promise<DoctorWithPr
       dp.clinic_name, dp.clinic_address, dp.city, dp.is_verified,
       dp.rating, dp.total_reviews, dp.created_at as profile_created_at,
       dp.updated_at as profile_updated_at
-    FROM users u
-    LEFT JOIN doctor_profiles dp ON u.id = dp.user_id
+    FROM randevu.users u
+    LEFT JOIN randevu.doctor_profiles dp ON u.id = dp.user_id
     WHERE u.id = $1 AND u.role = 'doctor'`,
     [userId]
   );
@@ -211,7 +211,7 @@ export async function getDoctorWithProfile(userId: string): Promise<DoctorWithPr
  */
 export async function verifyDoctor(userId: string): Promise<void> {
   await query(
-    'UPDATE doctor_profiles SET is_verified = true, updated_at = CURRENT_TIMESTAMP WHERE user_id = $1',
+    'UPDATE randevu.doctor_profiles SET is_verified = true, updated_at = CURRENT_TIMESTAMP WHERE user_id = $1',
     [userId]
   );
 }
@@ -221,7 +221,7 @@ export async function verifyDoctor(userId: string): Promise<void> {
  */
 export async function unverifyDoctor(userId: string): Promise<void> {
   await query(
-    'UPDATE doctor_profiles SET is_verified = false, updated_at = CURRENT_TIMESTAMP WHERE user_id = $1',
+    'UPDATE randevu.doctor_profiles SET is_verified = false, updated_at = CURRENT_TIMESTAMP WHERE user_id = $1',
     [userId]
   );
 }
@@ -231,7 +231,7 @@ export async function unverifyDoctor(userId: string): Promise<void> {
  */
 export async function getAllSpecializations(): Promise<string[]> {
   const result = await query(
-    'SELECT DISTINCT specialization FROM doctor_profiles WHERE is_verified = true ORDER BY specialization'
+    'SELECT DISTINCT specialization FROM randevu.doctor_profiles WHERE is_verified = true ORDER BY specialization'
   );
 
   return result.rows.map((row) => row.specialization);
@@ -242,7 +242,7 @@ export async function getAllSpecializations(): Promise<string[]> {
  */
 export async function getAllCities(): Promise<string[]> {
   const result = await query(
-    'SELECT DISTINCT city FROM doctor_profiles WHERE is_verified = true AND city IS NOT NULL ORDER BY city'
+    'SELECT DISTINCT city FROM randevu.doctor_profiles WHERE is_verified = true AND city IS NOT NULL ORDER BY city'
   );
 
   return result.rows.map((row) => row.city);
