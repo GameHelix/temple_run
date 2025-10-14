@@ -1,6 +1,3 @@
-// In src/app/layout.tsx or globals.css
-import '../styles/blog.css';
-import '../styles/richTextEditor.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -16,8 +13,8 @@ initializeApp().catch(error => {
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Intelligent Healthcare Assistant',
-  description: 'A healthcare chatbot to provide health information and guidance',
+  title: 'Randevu - Doctor Appointment Booking',
+  description: 'Book doctor appointments online. Find verified doctors, view availability, and schedule appointments instantly.',
 };
 
 export default function RootLayout({

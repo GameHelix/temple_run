@@ -43,3 +43,16 @@ export function parseJwt(token: string): JwtPayload | null {
 export function verifyTokenForEdge(token: string): JwtPayload | null {
   return parseJwt(token);
 }
+
+/**
+ * Verify token - returns payload with userId and role
+ */
+export async function verifyToken(token: string): Promise<{ userId: string; role: string } | null> {
+  const payload = parseJwt(token);
+  if (!payload) return null;
+
+  return {
+    userId: payload.id,
+    role: payload.role || 'patient',
+  };
+}

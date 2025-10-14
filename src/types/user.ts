@@ -21,7 +21,7 @@ export interface SignUpData {
   email: string;
   password: string;
   phone?: string;
-  role: 'doctor' | 'patient';
+  role: 'doctor' | 'patient' | 'admin';
 }
 
 export interface AuthResponse {
