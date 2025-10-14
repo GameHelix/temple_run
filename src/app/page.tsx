@@ -1,24 +1,24 @@
+// src/app/page.tsx
 'use client';
 
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { Heart } from 'lucide-react';
+import { Calendar, Clock, Users, Shield, Search, CheckCircle } from 'lucide-react';
 
 export default function Home() {
   const { user } = useAuth();
 
   return (
-    <main className="min-h-screen bg-gray-900 text-white">
-      {/* Hero Section with Dark Background */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-indigo-950 to-gray-900">
-        {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -inset-[10%] opacity-30">
+    <main className="min-h-screen bg-white">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800">
+        <div className="absolute inset-0 overflow-hidden opacity-10">
+          <div className="absolute -inset-[10%]">
             <svg viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <linearGradient id="b" gradientTransform="rotate(45 0.5 0.5)">
-                  <stop offset="0%" stopColor="#4338ca" />
-                  <stop offset="100%" stopColor="#5b21b6" />
+                  <stop offset="0%" stopColor="#ffffff" />
+                  <stop offset="100%" stopColor="#93c5fd" />
                 </linearGradient>
                 <clipPath id="a">
                   <path fill="currentColor" d="M744.5 750Q625 1000 375 750T124.5 250Q250 0 500 250T744.5 750Z" />
@@ -30,25 +30,87 @@ export default function Home() {
             </svg>
           </div>
         </div>
-        
-        {/* Hero content */}
+
         <div className="container relative mx-auto px-6 py-24 md:py-32">
           <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
-            <div className="flex items-center mb-6 animate-pulse">
-              <Heart className="h-12 w-12 text-purple-400" />
+            <div className="flex items-center mb-6">
+              <Calendar className="h-16 w-16 text-blue-200" />
             </div>
-            
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-indigo-200 via-purple-300 to-blue-200">
-              Intelligent Healthcare Assistant
+
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 text-white">
+              Book Doctor Appointments Online
             </h1>
-            
-            <p className="text-xl md:text-2xl mb-10 text-indigo-100 max-w-3xl">
-              Your personal AI-powered healthcare companion providing reliable information and guidance when you need it most.
+
+            <p className="text-xl md:text-2xl mb-10 text-blue-100 max-w-3xl">
+              Find verified doctors, view real-time availability, and book appointments instantly. Healthcare made simple.
             </p>
-            
-            <div className="mt-4">
-              <p className="text-indigo-200 text-xl">
-                The intelligent healthcare companion for the modern age
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link
+                href="/doctors"
+                className="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-50 transition-colors shadow-lg"
+              >
+                Browse Doctors
+              </Link>
+              {!user && (
+                <Link
+                  href="/auth/signup"
+                  className="bg-blue-500 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-400 transition-colors border-2 border-white"
+                >
+                  Sign Up Free
+                </Link>
+              )}
+              {user && user.role === 'patient' && (
+                <Link
+                  href="/appointments"
+                  className="bg-blue-500 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-400 transition-colors border-2 border-white"
+                >
+                  My Appointments
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* How It Works */}
+      <div className="bg-gray-50 py-20">
+        <div className="container mx-auto px-6">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
+            How Randevu Works
+          </h2>
+          <p className="text-center text-gray-600 mb-16 max-w-2xl mx-auto">
+            Book appointments with verified doctors in three simple steps
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-6">
+                <Search className="h-8 w-8 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">1. Find a Doctor</h3>
+              <p className="text-gray-600">
+                Search for verified doctors by specialization, location, and availability
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-6">
+                <Calendar className="h-8 w-8 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">2. Pick a Time</h3>
+              <p className="text-gray-600">
+                View real-time availability and choose a convenient time slot
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="h-8 w-8 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">3. Confirm Booking</h3>
+              <p className="text-gray-600">
+                Receive instant confirmation and manage your appointment online
               </p>
             </div>
           </div>
@@ -56,82 +118,138 @@ export default function Home() {
       </div>
 
       {/* Features Section */}
-      <div className="bg-gray-900 py-20">
+      <div className="bg-white py-20">
         <div className="container mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center mb-16 text-indigo-100">How Our Healthcare Assistant Helps You</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Feature 1 */}
-            <div className="bg-gray-800 rounded-xl p-8 shadow-lg transition-all duration-300 hover:shadow-indigo-500/10 hover:translate-y-[-5px]">
-              <div className="w-14 h-14 rounded-lg bg-indigo-900/70 flex items-center justify-center mb-6">
-                <svg className="h-7 w-7 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-gray-900">
+            Why Choose Randevu
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+              <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mb-4">
+                <Shield className="h-6 w-6 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold text-indigo-100 mb-3">Reliable Information</h3>
-              <p className="text-gray-300">
-                Access evidence-based health information on common conditions, symptoms, and treatments from trusted medical sources.
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Verified Doctors</h3>
+              <p className="text-gray-600 text-sm">
+                All doctors are verified by our admin team before appearing in search
               </p>
             </div>
-            
-            {/* Feature 2 */}
-            <div className="bg-gray-800 rounded-xl p-8 shadow-lg transition-all duration-300 hover:shadow-indigo-500/10 hover:translate-y-[-5px]">
-              <div className="w-14 h-14 rounded-lg bg-indigo-900/70 flex items-center justify-center mb-6">
-                <svg className="h-7 w-7 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
+
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+              <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mb-4">
+                <Clock className="h-6 w-6 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold text-indigo-100 mb-3">Personalized Guidance</h3>
-              <p className="text-gray-300">
-                Receive tailored health recommendations and answers to your specific questions with our AI-powered chat assistant.
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Real-Time Availability</h3>
+              <p className="text-gray-600 text-sm">
+                See available time slots instantly and book without phone calls
               </p>
             </div>
-            
-            {/* Feature 3 */}
-            <div className="bg-gray-800 rounded-xl p-8 shadow-lg transition-all duration-300 hover:shadow-indigo-500/10 hover:translate-y-[-5px]">
-              <div className="w-14 h-14 rounded-lg bg-indigo-900/70 flex items-center justify-center mb-6">
-                <svg className="h-7 w-7 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
+
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+              <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mb-4">
+                <Calendar className="h-6 w-6 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold text-indigo-100 mb-3">Privacy Focused</h3>
-              <p className="text-gray-300">
-                Your health information is protected with secure, private conversations and industry-standard encryption.
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Easy Management</h3>
+              <p className="text-gray-600 text-sm">
+                View, reschedule, or cancel appointments from your dashboard
+              </p>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+              <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mb-4">
+                <Users className="h-6 w-6 text-blue-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Multiple Specializations</h3>
+              <p className="text-gray-600 text-sm">
+                Find specialists across all medical fields in one platform
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Quote Section - Replacing CTA */}
-      <div className="bg-gradient-to-b from-gray-900 to-indigo-950 py-16">
+      {/* CTA Section */}
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 py-16">
         <div className="container mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold mb-8 text-white">What Healthcare Means To Us</h2>
-          <div className="max-w-3xl mx-auto">
-            <blockquote className="text-xl italic text-indigo-100 mb-6">
-              &quot;The goal of our healthcare assistant is to make reliable health information accessible to everyone, 
-              empowering you to make informed decisions about your wellbeing.&quot;
-            </blockquote>
-            <p className="text-indigo-200">
-              Powered by advanced AI technology to provide evidence-based guidance
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Minimal Footer */}
-      <footer className="bg-gray-950 text-gray-400 py-8">
-        <div className="container mx-auto px-6 text-center">
-          <div className="flex items-center justify-center mb-4">
-            <Heart className="h-6 w-6 text-indigo-400 mr-2" />
-            <span className="text-lg font-semibold text-indigo-100">Healthcare Assistant</span>
-          </div>
-          <p className="text-sm">
-            &copy; {new Date().getFullYear()} Healthcare Assistant. All rights reserved.
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">
+            Ready to Get Started?
+          </h2>
+          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+            {user && user.role === 'patient'
+              ? 'Browse our network of verified doctors and book your appointment today'
+              : user && user.role === 'doctor'
+              ? 'Manage your appointments and availability from your dashboard'
+              : 'Join thousands of patients finding healthcare providers online'}
           </p>
-          <div className="mt-4 space-x-4">
-            <Link href="/terms" className="text-sm text-indigo-300 hover:text-indigo-200">Terms</Link>
-            <Link href="/privacy" className="text-sm text-indigo-300 hover:text-indigo-200">Privacy</Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            {!user ? (
+              <>
+                <Link
+                  href="/auth/signup"
+                  className="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-50 transition-colors shadow-lg"
+                >
+                  Sign Up as Patient
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="bg-blue-500 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-400 transition-colors border-2 border-white"
+                >
+                  Join as Doctor
+                </Link>
+              </>
+            ) : user.role === 'patient' ? (
+              <Link
+                href="/doctors"
+                className="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-50 transition-colors shadow-lg"
+              >
+                Find a Doctor
+              </Link>
+            ) : (
+              <Link
+                href="/doctor/appointments"
+                className="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-50 transition-colors shadow-lg"
+              >
+                View Appointments
+              </Link>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-gray-400 py-12">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div>
+              <div className="flex items-center mb-4">
+                <Calendar className="h-6 w-6 text-blue-400 mr-2" />
+                <span className="text-lg font-semibold text-white">Randevu</span>
+              </div>
+              <p className="text-sm">
+                Making healthcare accessible through easy online appointment booking.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="text-white font-semibold mb-4">Quick Links</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/doctors" className="hover:text-blue-400 transition-colors">Find Doctors</Link></li>
+                <li><Link href="/auth/signin" className="hover:text-blue-400 transition-colors">Sign In</Link></li>
+                <li><Link href="/auth/signup" className="hover:text-blue-400 transition-colors">Sign Up</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="text-white font-semibold mb-4">Legal</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/terms" className="hover:text-blue-400 transition-colors">Terms of Service</Link></li>
+                <li><Link href="/privacy" className="hover:text-blue-400 transition-colors">Privacy Policy</Link></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-800 pt-8 text-center text-sm">
+            <p>&copy; {new Date().getFullYear()} Randevu. All rights reserved.</p>
           </div>
         </div>
       </footer>

@@ -1,229 +1,269 @@
-# Intelligent Healthcare Assistant
+# Randevu - Doctor Appointment System
 
-A Next.js-based healthcare assistant application that provides health information and guidance to users. This AI-powered assistant can answer questions about common health issues, provide general medical information, and guide users toward appropriate healthcare resources.
+A modern, full-stack doctor appointment booking platform built with Next.js, TypeScript, and PostgreSQL. Randevu connects patients with verified doctors, making healthcare more accessible through easy online appointment scheduling.
 
-## 🌟 Features
+## Core Problem Solved
 
-- **Modern Tech Stack**: Built with Next.js 15, React 19, TypeScript, and Tailwind CSS
-- **Interactive Chat Interface**: Real-time conversation with intelligent health assistant
-- **Role-Based Access Control**: Separate interfaces for patients, healthcare providers, and administrators
-- **Personalized Responses**: Tailored answers based on user context and chat history
-- **Comprehensive User Authentication**: Complete signup, signin, and profile management
-- **PostgreSQL Database Integration**: Secure storage of user data, chat history, and blog content
-- **OpenAI Integration**: Advanced responses for complex health queries
-- **Responsive Design**: Works seamlessly on mobile, tablet, and desktop
-- **Health Information Database**: Built-in responses for common health topics
-- **Privacy-Focused**: Clear disclaimers and secure handling of sensitive information
-- **JWT Authentication**: Secure token-based authentication system with HTTP-only cookies
-- **Protected Routes**: Middleware-based route protection for secure access control
-- **Doctor Verification System**: Administrative approval workflow for healthcare providers
-- **Content Management System**: Blog creation and management for health information
-- **Animated UI Components**: Modern, visually appealing interface with animated elements
+**Randevu solves the challenge of finding and booking doctor appointments online.** Patients can browse verified doctors by specialization and location, view available time slots, and book appointments instantly. Doctors can manage their availability and appointments through a simple dashboard.
 
-## 🚀 Getting Started
+## Features
+
+### For Patients
+- Browse verified doctors by specialization and city
+- View doctor profiles with experience, education, and consultation fees
+- See real-time available time slots
+- Book appointments online
+- View and manage upcoming/past appointments
+- Cancel appointments with reason
+
+### For Doctors
+- Create and manage professional profile
+- Set weekly availability schedule
+- View and manage appointments
+- Confirm, complete, or cancel appointments
+- Add consultation notes
+- Require admin verification before appearing in search
+
+### For Administrators
+- Verify/unverify doctor accounts
+- Oversee platform operations
+- Manage user roles
+
+## Tech Stack
+
+- **Framework**: Next.js 15 with App Router
+- **Language**: TypeScript
+- **Database**: PostgreSQL (Neon)
+- **Authentication**: JWT with HTTP-only cookies
+- **Styling**: Tailwind CSS v4
+- **UI Components**: Headless UI, Lucide Icons
+- **State Management**: React Context API
+
+## Database Schema
+
+### Tables
+
+1. **users** - User accounts (patients, doctors, admins)
+2. **doctor_profiles** - Doctor professional information
+3. **availability_schedule** - Doctor weekly availability
+4. **appointments** - Appointment bookings
+
+## Getting Started
 
 ### Prerequisites
 
-- Node.js 18.x or higher
+- Node.js 18+
+- PostgreSQL database (Neon recommended)
 - npm or yarn
-- PostgreSQL database
 
 ### Installation
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/ismat-samadov/intelligent-healthcare-assistant.git
-   cd intelligent-healthcare-assistant
+   git clone <repository-url>
+   cd randevu
    ```
 
 2. Install dependencies:
    ```bash
    npm install
-   # or
-   yarn install
    ```
 
-3. Create an `.env.local` file in the root directory with the following variables:
-   ```
-   # PostgreSQL Database Configuration
+3. Create `.env.local` file:
+   ```env
+   # PostgreSQL Database
    DB_HOST=your_db_host
    DB_PORT=5432
    DB_NAME=your_db_name
    DB_USER=your_db_username
    DB_PASSWORD=your_db_password
-   
-   # JWT Secret (Generate a strong random string)
+
+   # JWT Secret (generate a strong random string)
    JWT_SECRET=your_jwt_secret_key_here
-   
-   # Admin Creation Key (For creating admin accounts)
+
+   # Admin Creation Key (for creating admin accounts)
    ADMIN_CREATION_KEY=your_secure_admin_key_here
-   
-   # OpenAI API Key (For advanced responses)
-   OPENAI_API_KEY=your_openai_api_key_here
    ```
 
 4. Initialize the database:
    ```bash
    psql -U your_db_username -d your_db_name -f scripts/scripts.sql
-   # or use npx ts-node scripts/init-db.ts if you've set up a TypeScript script
    ```
 
 5. Run the development server:
    ```bash
    npm run dev
-   # or
-   yarn dev
    ```
 
-6. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+6. Open [http://localhost:3000](http://localhost:3000)
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
-intelligent-healthcare-assistant/
-├── public/                # Static assets
+randevu/
 ├── src/
-│   ├── app/               # Next.js App Router
-│   │   ├── api/           # API routes
-│   │   │   ├── admin/     # Admin-specific endpoints
-│   │   │   ├── auth/      # Authentication endpoints
-│   │   │   ├── blog/      # Blog management endpoints
-│   │   │   └── chat/      # Chat endpoint
-│   │   ├── admin/         # Admin dashboard and management
-│   │   ├── auth/          # Auth-related pages
-│   │   ├── blog/          # Blog pages and post view
-│   │   ├── chat/          # Chat interface page
-│   │   ├── doctor/        # Doctor-specific pages
-│   │   ├── privacy/       # Privacy policy page
-│   │   ├── profile/       # User profile page
-│   │   ├── terms/         # Terms of service page
-│   │   ├── page.tsx       # Home page
-│   │   └── layout.tsx     # Root layout
-│   ├── components/        # React components
-│   │   ├── admin/         # Admin components
-│   │   ├── auth/          # Authentication components
-│   │   ├── blog/          # Blog components
-│   │   ├── doctor/        # Doctor-specific components
-│   │   ├── ChatInterface.tsx   # Chat UI component
-│   │   ├── ChatMessage.tsx     # Individual message component
-│   │   ├── Navbar.tsx          # Navigation component
-│   │   ├── PrivacyPolicy.tsx   # Privacy policy component
-│   │   └── TermsOfService.tsx  # Terms of service component
-│   ├── context/           # React context
-│   │   └── AuthContext.tsx # Authentication context
-│   ├── lib/               # Utility functions
-│   │   ├── blog-db.ts     # Blog database operations
-│   │   ├── chatbot.ts     # Chatbot logic
-│   │   ├── db.ts          # Database connection
-│   │   ├── edge-jwt.ts    # Edge-compatible JWT utilities
-│   │   ├── initDB.ts      # Database initialization
-│   │   ├── jwt.ts         # JWT utilities
-│   │   └── user-db.ts     # User database operations
-│   ├── middleware.ts      # Next.js middleware for auth protection
-│   ├── styles/            # CSS styles
-│   │   └── blog.css       # Blog-specific styles
-│   └── types/             # TypeScript type definitions
-│       ├── chat.ts        # Chat-related types
-│       └── user.ts        # User and blog-related types
-├── scripts/               # Utility scripts
-│   ├── generate-password-hash.js # Password hashing utility
-│   └── scripts.sql        # Database initialization SQL
-├── .env.local             # Environment variables (create this file)
+│   ├── app/                    # Next.js App Router
+│   │   ├── api/                # API Routes
+│   │   │   ├── appointments/   # Appointment endpoints
+│   │   │   ├── auth/           # Authentication endpoints
+│   │   │   ├── availability/   # Availability endpoints
+│   │   │   ├── doctors/        # Doctor endpoints
+│   │   │   └── admin/          # Admin endpoints
+│   │   ├── admin/              # Admin pages
+│   │   ├── auth/               # Auth pages (signin/signup)
+│   │   ├── doctor/             # Doctor dashboard pages
+│   │   ├── appointments/       # Patient appointment pages
+│   │   ├── doctors/            # Doctor listing and profiles
+│   │   └── profile/            # User profile page
+│   ├── components/             # React components
+│   │   ├── admin/              # Admin components
+│   │   ├── auth/               # Auth forms
+│   │   └── doctor/             # Doctor components
+│   ├── context/                # React Context
+│   │   └── AuthContext.tsx     # Authentication state
+│   ├── lib/                    # Core logic
+│   │   ├── db.ts               # Database connection
+│   │   ├── doctor-db.ts        # Doctor operations
+│   │   ├── appointment-db.ts   # Appointment operations
+│   │   ├── availability-db.ts  # Availability operations
+│   │   ├── user-db.ts          # User operations
+│   │   ├── jwt.ts              # JWT utilities
+│   │   └── edge-jwt.ts         # Edge-compatible JWT
+│   ├── types/                  # TypeScript types
+│   │   └── user.ts             # Type definitions
+│   └── middleware.ts           # Route protection
+├── scripts/
+│   └── scripts.sql             # Database schema
 └── package.json
 ```
 
-## 🔐 Authentication System
+## API Endpoints
 
-The application uses a JWT-based authentication system:
+### Authentication
+- `POST /api/auth/signup` - Create new user account
+- `POST /api/auth/signin` - Sign in
+- `GET /api/auth/me` - Get current user info
 
-- **Sign Up**: Users can create a new account with name, email, password, and role (patient or doctor)
-- **Sign In**: Existing users can sign in with email and password
-- **Protected Routes**: Middleware automatically protects routes that require authentication
-- **Role-Based Access**: Doctor-specific and admin-specific routes are protected from unauthorized users
-- **User Profile**: Authenticated users can access their profile information
-- **Secure Token Storage**: Authentication tokens are stored in both localStorage and HTTP-only cookies
-- **JWT Verification**: Server-side verification of tokens for protected routes
+### Doctors
+- `GET /api/doctors` - List verified doctors (with filters)
+- `GET /api/doctors/[id]` - Get doctor details
+- `GET /api/doctors/profile` - Get own profile (doctor only)
+- `POST /api/doctors/profile` - Create/update profile (doctor only)
 
-## 💬 Chat Features
+### Appointments
+- `GET /api/appointments` - Get user's appointments
+- `POST /api/appointments` - Book appointment (patient only)
+- `GET /api/appointments/[id]` - Get appointment details
+- `PATCH /api/appointments/[id]` - Update appointment
+- `DELETE /api/appointments/[id]` - Cancel appointment
 
-- **Healthcare Knowledge Base**: Built-in responses for common health topics
-- **Context-Aware Suggestions**: Dynamically updated chat suggestions based on conversation
-- **Conversation History**: For authenticated users, chat history is maintained in the database
-- **Personalized Responses**: Users who are logged in receive personalized interactions
-- **OpenAI Integration**: Advanced AI responses when built-in knowledge is insufficient
-- **Health Disclaimers**: Clear healthcare disclaimers to ensure proper use of information
+### Availability
+- `GET /api/availability?doctorId=X` - Get doctor availability
+- `GET /api/availability?doctorId=X&date=YYYY-MM-DD` - Get available time slots
+- `POST /api/availability` - Set availability (doctor only)
 
-## 👨‍⚕️ Healthcare Provider Features
+### Admin
+- `GET /api/admin/doctors` - Get all doctors (admin only)
+- `POST /api/admin/doctors/verify` - Verify doctor (admin only)
+- `POST /api/admin/create-admin` - Create admin account
 
-For users with the "doctor" role:
+## User Roles
 
-- **Doctor Dashboard**: Overview of patient statistics and activities
-- **Provider Portal**: Centralized access to healthcare provider tools
-- **Verification Process**: Admin-based verification of healthcare provider accounts
-- **Role-Based UI**: Special navigation options and features for doctors
+### Patient
+- Default role for new signups
+- Can browse doctors and book appointments
+- Can view and manage their appointments
 
-## 📝 Content Management
+### Doctor
+- Must complete profile after signup
+- Requires admin verification to appear in search
+- Can set availability and manage appointments
 
-The application includes a blog system for healthcare content:
+### Admin
+- Created via `/api/admin/create-admin` with ADMIN_CREATION_KEY
+- Can verify/unverify doctors
+- Full platform oversight
+- Default admin: `admin@randevu.com` / `admin123`
 
-- **Blog Posts**: Create, edit, and publish health-related articles
-- **Admin Dashboard**: Manage blog content through a user-friendly interface
-- **Tags and Categories**: Organize posts by tags for easy navigation
-- **Publishing Workflow**: Save drafts and publish when ready
-- **Rich Text Content**: Support for HTML formatting in blog posts
+## Key Features Detail
 
-## 🧠 AI Integration
+### Appointment Booking Flow
+1. Patient browses verified doctors
+2. Selects doctor and views profile
+3. Picks date and sees available time slots
+4. Books appointment with optional notes
+5. Appointment created with "pending" status
 
-The chatbot uses a combination of:
+### Doctor Verification
+1. Doctor signs up and completes profile
+2. Admin reviews doctor credentials
+3. Admin verifies doctor account
+4. Doctor appears in patient search results
 
-1. **Built-in Knowledge Base**: For fast responses to common health questions
-2. **OpenAI API**: For more complex or nuanced health inquiries
-3. **Personalization Layer**: Adapts responses based on user context and history
+### Availability Management
+- Doctors set recurring weekly schedules
+- Define day of week, start time, and end time
+- System generates 30-minute time slots
+- Automatically excludes booked slots
 
-## 💽 Database Integration
+### Appointment States
+- **pending**: Initial state after booking
+- **confirmed**: Doctor confirmed the appointment
+- **completed**: Appointment finished
+- **cancelled**: Cancelled by patient or doctor
+- **no_show**: Patient didn't attend
 
-The application uses PostgreSQL for data storage:
+## Customization
 
-- **User Management**: Securely stores user information with encrypted passwords
-- **Role-Based System**: Distinguishes between patients, doctors, and administrators
-- **Chat History**: Logs conversation history for authenticated users
-- **Blog Content**: Stores blog posts, tags, and publishing status
-- **Connection Pool**: Efficient connection management for database operations
+### Adding Specializations
+Specializations are free-text fields. Popular ones will appear in filters automatically as doctors use them.
 
-## 🔧 Customizing the Application
+### Changing Appointment Duration
+Default is 30 minutes. Modify in `src/lib/appointment-db.ts` in the `getAvailableTimeSlots` function.
 
-### Adding More Health Topics
+### Email Notifications
+Currently not implemented. Consider integrating:
+- Resend
+- SendGrid
+- Amazon SES
 
-To add more built-in responses to common health queries, edit the `healthcareKnowledgeBase` object in `src/lib/chatbot.ts`:
+### Payment Integration
+For paid consultations, consider:
+- Stripe
+- PayPal
+- Square
 
-```typescript
-const healthcareKnowledgeBase = {
-  // Existing topics...
-  'new-topic': 'Your response about the new health topic here.',
-};
+## Environment Variables
+
+```env
+# Required
+DB_HOST=              # PostgreSQL host
+DB_PORT=5432          # PostgreSQL port
+DB_NAME=              # Database name
+DB_USER=              # Database user
+DB_PASSWORD=          # Database password
+JWT_SECRET=           # Secret for JWT tokens
+
+# Optional
+ADMIN_CREATION_KEY=   # Key for creating admin accounts
 ```
 
-### Extending the Authentication System
+## Security
 
-To implement additional authentication features:
+- Passwords hashed with bcrypt
+- JWT tokens stored in HTTP-only cookies
+- Route protection via middleware
+- Role-based access control
+- SQL injection protection via parameterized queries
 
-1. Add new fields to the user registration form in `src/components/auth/SignUpForm.tsx`
-2. Update the database schema in `scripts/scripts.sql` to include new fields
-3. Modify the user-related types in `src/types/user.ts`
-4. Implement additional auth endpoints in `src/app/api/auth/`
+## License
 
-### Customizing the UI
+MIT License - see LICENSE file for details
 
-The application uses Tailwind CSS for styling. To customize the appearance:
+## Support
 
-1. Modify component files directly to change the Tailwind classes
-2. Update global styles in `src/app/globals.css`
-3. Add new component-specific styles when needed
+For issues and feature requests, please create an issue in the GitHub repository.
 
-## ⚠️ Health Information Disclaimer
+---
 
-This healthcare assistant is intended for informational purposes only and should not be used as a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.
-
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+**Randevu** - Making healthcare accessible, one appointment at a time.

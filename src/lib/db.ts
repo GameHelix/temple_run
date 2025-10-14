@@ -8,7 +8,8 @@ const pool = new Pool({
   database: process.env.DB_NAME,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  ssl: true // Always enable SSL for Neon database
+  ssl: true, // Always enable SSL for Neon database
+  options: '-c search_path=randevu,public' // Use randevu schema by default
 });
 
 // Helper function to get a client from the pool
