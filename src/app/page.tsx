@@ -4,12 +4,25 @@
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { Calendar, Clock, Users, Shield, Search, CheckCircle } from 'lucide-react';
+import { OrganizationSchema, WebsiteSchema } from '@/components/StructuredData';
 
 export default function Home() {
   const { user } = useAuth();
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
   return (
-    <main className="min-h-screen bg-white">
+    <>
+      <OrganizationSchema
+        name="Randevu"
+        url={baseUrl}
+        description="Book doctor appointments online. Find verified doctors, view availability, and schedule appointments instantly."
+      />
+      <WebsiteSchema
+        name="Randevu - Doctor Appointment Booking"
+        url={baseUrl}
+        description="Book doctor appointments online. Find verified doctors, view availability, and schedule appointments instantly."
+      />
+      <main className="min-h-screen bg-white">
       {/* Hero Section */}
       <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800">
         <div className="absolute inset-0 overflow-hidden opacity-10">
@@ -33,19 +46,19 @@ export default function Home() {
 
         <div className="container relative mx-auto px-6 py-24 md:py-32">
           <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
-            <div className="flex items-center mb-6">
+            <div className="flex items-center mb-6 animate-fade-in-down">
               <Calendar className="h-16 w-16 text-blue-200" />
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 text-white">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 text-white animate-fade-in-up text-balance">
               Book Doctor Appointments Online
             </h1>
 
-            <p className="text-xl md:text-2xl mb-10 text-blue-100 max-w-3xl">
+            <p className="text-xl md:text-2xl mb-10 text-blue-100 max-w-3xl animate-fade-in-up animate-stagger-1">
               Find verified doctors, view real-time availability, and book appointments instantly. Healthcare made simple.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up animate-stagger-2">
               <Link
                 href="/doctors"
                 className="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-50 transition-colors shadow-lg"
@@ -84,8 +97,8 @@ export default function Home() {
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-6">
+            <div className="text-center animate-fade-in-up animate-stagger-1">
+              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-6 transition-transform hover:scale-110 duration-300">
                 <Search className="h-8 w-8 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">1. Find a Doctor</h3>
@@ -94,8 +107,8 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-6">
+            <div className="text-center animate-fade-in-up animate-stagger-2">
+              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-6 transition-transform hover:scale-110 duration-300">
                 <Calendar className="h-8 w-8 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">2. Pick a Time</h3>
@@ -104,8 +117,8 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-6">
+            <div className="text-center animate-fade-in-up animate-stagger-3">
+              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-6 transition-transform hover:scale-110 duration-300">
                 <CheckCircle className="h-8 w-8 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">3. Confirm Booking</h3>
@@ -125,7 +138,7 @@ export default function Home() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-fade-in-up animate-stagger-1">
               <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mb-4">
                 <Shield className="h-6 w-6 text-blue-600" />
               </div>
@@ -135,7 +148,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-fade-in-up animate-stagger-2">
               <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mb-4">
                 <Clock className="h-6 w-6 text-blue-600" />
               </div>
@@ -145,7 +158,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-fade-in-up animate-stagger-3">
               <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mb-4">
                 <Calendar className="h-6 w-6 text-blue-600" />
               </div>
@@ -155,7 +168,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+            <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-fade-in-up animate-stagger-4">
               <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mb-4">
                 <Users className="h-6 w-6 text-blue-600" />
               </div>
@@ -254,5 +267,6 @@ export default function Home() {
         </div>
       </footer>
     </main>
+    </>
   );
 }

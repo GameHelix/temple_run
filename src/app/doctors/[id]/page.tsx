@@ -16,11 +16,13 @@ import {
   Calendar,
   Clock,
 } from 'lucide-react';
+import { DoctorSchema, BreadcrumbSchema } from '@/components/StructuredData';
 
 export default function DoctorProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const { user } = useAuth();
   const router = useRouter();
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
   const [doctor, setDoctor] = useState<DoctorWithProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -176,7 +178,30 @@ export default function DoctorProfilePage({ params }: { params: Promise<{ id: st
   const profile = doctor?.profile;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <>
+      {doctor && profile && (
+        <>
+          <DoctorSchema
+            name={doctor.name}
+            specialization={profile.specialization}
+            bio={profile.bio || undefined}
+            city={profile.city || undefined}
+            education={profile.education || undefined}
+            experienceYears={profile.experienceYears || undefined}
+            rating={profile.totalReviews > 0 ? profile.rating : undefined}
+            totalReviews={profile.totalReviews > 0 ? profile.totalReviews : undefined}
+            url={`${baseUrl}/doctors/${doctor.id}`}
+          />
+          <BreadcrumbSchema
+            items={[
+              { name: 'Home', url: baseUrl },
+              { name: 'Find Doctors', url: `${baseUrl}/doctors` },
+              { name: doctor.name, url: `${baseUrl}/doctors/${doctor.id}` },
+            ]}
+          />
+        </>
+      )}
+      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         {/* Success Message */}
         {bookingSuccess && (
@@ -376,5 +401,6 @@ export default function DoctorProfilePage({ params }: { params: Promise<{ id: st
         </div>
       </div>
     </div>
+    </>
   );
 }
