@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const status = searchParams.get('status')?.split(',') || undefined;
     const fromDate = searchParams.get('fromDate') || undefined;
+    const toDate = searchParams.get('toDate') || undefined;
 
     let appointments;
 
@@ -37,6 +38,7 @@ export async function GET(request: NextRequest) {
       appointments = await getDoctorAppointments(decoded.userId, {
         status: status as any,
         fromDate,
+        toDate,
       });
     } else if (decoded.role === 'patient') {
       appointments = await getPatientAppointments(decoded.userId, {
