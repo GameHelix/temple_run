@@ -161,9 +161,30 @@ export default function DoctorProfilePage({ params }: { params: Promise<{ id: st
   if (error && !doctor) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="text-center">
+        <div className="max-w-md text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Doctor Not Found</h1>
-          <p className="text-gray-600 mb-6">{error}</p>
+          <p className="text-gray-600 mb-4">{error}</p>
+
+          {user?.role === 'doctor' && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-left">
+              <h3 className="font-semibold text-blue-900 mb-2">Are you trying to view your own profile?</h3>
+              <p className="text-sm text-blue-800 mb-3">
+                Your profile won't appear here until you complete these steps:
+              </p>
+              <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
+                <li>Complete your professional profile</li>
+                <li>Wait for admin verification</li>
+                <li>Once verified, your profile will be public</li>
+              </ol>
+              <button
+                onClick={() => router.push('/doctor/onboarding')}
+                className="mt-4 w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium"
+              >
+                View Onboarding Guide
+              </button>
+            </div>
+          )}
+
           <button
             onClick={() => router.push('/doctors')}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
