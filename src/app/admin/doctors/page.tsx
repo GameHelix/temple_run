@@ -7,12 +7,20 @@ import Link from 'next/link';
 import axios from 'axios';
 import { useAuth } from '@/context/AuthContext';
 import { User } from '@/types/user';
-import { CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+
+interface DoctorWithProfileStatus extends User {
+  hasProfile?: boolean;
+  profileDetails?: {
+    specialization?: string;
+    city?: string;
+  };
+}
 
 export default function AdminDoctorsPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
-  const [doctors, setDoctors] = useState<User[]>([]);
+  const [doctors, setDoctors] = useState<DoctorWithProfileStatus[]>([]);
   const [loadingDoctors, setLoadingDoctors] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -25,14 +33,41 @@ export default function AdminDoctorsPage() {
     }
   }, [user, loading, router]);
 
-  // Fetch doctors
+  // Fetch doctors with their profile status
   useEffect(() => {
     const fetchDoctors = async () => {
       if (user?.role === 'admin') {
         try {
           setLoadingDoctors(true);
           const response = await axios.get('/api/admin/doctors');
-          setDoctors(response.data.doctors || []);
+          const doctorsData = response.data.doctors || [];
+
+          // Fetch profile information for each doctor
+          const doctorsWithProfiles = await Promise.all(
+            doctorsData.map(async (doctor: User) => {
+              try {
+                const profileRes = await fetch(`/api/doctors/${doctor.id}`);
+                const profileData = await profileRes.json();
+
+                return {
+                  ...doctor,
+                  hasProfile: profileData.success && profileData.doctor?.profile != null,
+                  profileDetails: profileData.doctor?.profile ? {
+                    specialization: profileData.doctor.profile.specialization,
+                    city: profileData.doctor.profile.city,
+                  } : undefined,
+                };
+              } catch (err) {
+                console.error(`Error fetching profile for doctor ${doctor.id}:`, err);
+                return {
+                  ...doctor,
+                  hasProfile: false,
+                };
+              }
+            })
+          );
+
+          setDoctors(doctorsWithProfiles);
         } catch (error) {
           console.error('Error fetching doctors:', error);
           setError('Failed to load doctor accounts');
@@ -176,6 +211,9 @@ export default function AdminDoctorsPage() {
                         Email
                       </th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-indigo-300 uppercase tracking-wider">
+                        Profile Status
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-indigo-300 uppercase tracking-wider">
                         Registered
                       </th>
                       <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-indigo-300 uppercase tracking-wider">
@@ -192,6 +230,26 @@ export default function AdminDoctorsPage() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-indigo-300">{doctor.email}</div>
                         </td>
+                        <td className="px-6 py-4">
+                          {doctor.hasProfile ? (
+                            <div>
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mb-1">
+                                Profile Complete
+                              </span>
+                              {doctor.profileDetails && (
+                                <div className="text-xs text-indigo-400 mt-1">
+                                  {doctor.profileDetails.specialization}
+                                  {doctor.profileDetails.city && ` • ${doctor.profileDetails.city}`}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                              <AlertCircle className="h-3 w-3 mr-1" />
+                              No Profile
+                            </span>
+                          )}
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-indigo-300">
                           {new Date(doctor.createdAt).toLocaleDateString()}
                         </td>
@@ -206,8 +264,9 @@ export default function AdminDoctorsPage() {
                               <>
                                 <button
                                   onClick={() => handleVerify(doctor.id)}
-                                  disabled={processingId !== null}
+                                  disabled={processingId !== null || !doctor.hasProfile}
                                   className="text-green-500 hover:text-green-400 flex items-center disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105"
+                                  title={!doctor.hasProfile ? 'Doctor must complete profile first' : 'Verify doctor profile'}
                                 >
                                   <CheckCircle className="h-4 w-4 mr-1" />
                                   Verify

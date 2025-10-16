@@ -3,16 +3,39 @@
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { AlertCircle, CheckCircle, Edit } from 'lucide-react';
 
 export default function ProfilePage() {
   const { user, loading, isDoctor } = useAuth();
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
+  const [doctorProfile, setDoctorProfile] = useState<any>(null);
+  const [loadingProfile, setLoadingProfile] = useState(false);
 
   useEffect(() => {
     // This helps avoid hydration mismatch
     setIsClient(true);
   }, []);
+
+  // Fetch doctor profile if user is a doctor
+  useEffect(() => {
+    if (user && user.role === 'doctor') {
+      setLoadingProfile(true);
+      fetch('/api/doctors/profile')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success && data.profile) {
+            setDoctorProfile(data.profile);
+          }
+        })
+        .catch((err) => {
+          console.error('Error fetching doctor profile:', err);
+        })
+        .finally(() => {
+          setLoadingProfile(false);
+        });
+    }
+  }, [user]);
 
   if (!isClient) {
     return null; // Prevent rendering until client-side
@@ -61,6 +84,84 @@ export default function ProfilePage() {
 
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 relative">
         <div className="px-4 py-6 sm:px-0">
+          {/* Doctor Profile Status Banner */}
+          {user?.role === 'doctor' && !loadingProfile && (
+            <div className="mb-8">
+              {!doctorProfile ? (
+                <div className="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-r-lg shadow-sm">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start">
+                      <AlertCircle className="h-6 w-6 text-yellow-400 mt-0.5 mr-4 flex-shrink-0" />
+                      <div>
+                        <h3 className="text-lg font-semibold text-yellow-800 mb-2">Complete Your Doctor Profile</h3>
+                        <p className="text-sm text-yellow-700 mb-4">
+                          Your doctor profile is incomplete. Complete your professional information to:
+                        </p>
+                        <ul className="list-disc list-inside text-sm text-yellow-700 space-y-1 mb-4">
+                          <li>Appear in the doctors directory</li>
+                          <li>Receive patient appointments</li>
+                          <li>Manage your schedule</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => router.push('/doctor/profile-setup')}
+                      className="ml-4 bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 whitespace-nowrap"
+                    >
+                      <Edit className="h-4 w-4" />
+                      Complete Profile
+                    </button>
+                  </div>
+                </div>
+              ) : !doctorProfile.isVerified ? (
+                <div className="bg-blue-50 border-l-4 border-blue-400 p-6 rounded-r-lg shadow-sm">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start">
+                      <AlertCircle className="h-6 w-6 text-blue-400 mt-0.5 mr-4 flex-shrink-0" />
+                      <div>
+                        <h3 className="text-lg font-semibold text-blue-800 mb-2">Profile Pending Verification</h3>
+                        <p className="text-sm text-blue-700 mb-2">
+                          Your doctor profile has been submitted and is under review by our admin team.
+                        </p>
+                        <p className="text-sm text-blue-700">
+                          You'll receive a notification once your profile is verified. After verification, you'll appear in the doctors directory and can start accepting appointments.
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => router.push('/doctor/profile-setup')}
+                      className="ml-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 whitespace-nowrap"
+                    >
+                      <Edit className="h-4 w-4" />
+                      Edit Profile
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-green-50 border-l-4 border-green-400 p-6 rounded-r-lg shadow-sm">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start">
+                      <CheckCircle className="h-6 w-6 text-green-400 mt-0.5 mr-4 flex-shrink-0" />
+                      <div>
+                        <h3 className="text-lg font-semibold text-green-800 mb-2">Profile Verified</h3>
+                        <p className="text-sm text-green-700">
+                          Your doctor profile is verified and visible to patients. You can now accept appointments and manage your schedule.
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => router.push('/doctor/profile-setup')}
+                      className="ml-4 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 whitespace-nowrap"
+                    >
+                      <Edit className="h-4 w-4" />
+                      Edit Profile
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Quick Actions - Moved to top */}
           <div className="mb-8 bg-gray-800/60 backdrop-blur-sm shadow overflow-hidden rounded-lg border border-gray-700">
             <div className="px-4 py-5 sm:px-6">
