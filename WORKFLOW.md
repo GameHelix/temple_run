@@ -27,10 +27,10 @@ graph TB
     end
 
     subgraph Backend["API Routes"]
-        AUTH[/api/auth]
-        DOCS[/api/doctors]
-        APPT[/api/appointments]
-        ADM[/api/admin]
+        AUTH["API: /auth"]
+        DOCS["API: /doctors"]
+        APPT["API: /appointments"]
+        ADM["API: /admin"]
     end
 
     subgraph Database["PostgreSQL"]
