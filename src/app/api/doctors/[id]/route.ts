@@ -1,6 +1,7 @@
 // src/app/api/doctors/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getDoctorWithProfile } from '@/lib/doctor-db';
+import { verifyToken } from '@/lib/edge-jwt';
 
 /**
  * GET /api/doctors/[id] - Get doctor details with profile
@@ -20,7 +21,21 @@ export async function GET(
       );
     }
 
-    if (!doctor.profile?.isVerified) {
+    // Check if requester is an admin
+    const token = request.cookies.get('token')?.value;
+    let isAdmin = false;
+
+    if (token) {
+      try {
+        const decoded = await verifyToken(token);
+        isAdmin = decoded?.role === 'admin';
+      } catch {
+        // Token is invalid or expired, continue as non-admin
+      }
+    }
+
+    // Only enforce verification check for non-admin users
+    if (!isAdmin && !doctor.profile?.isVerified) {
       return NextResponse.json(
         { success: false, message: 'Doctor is not verified' },
         { status: 403 }
