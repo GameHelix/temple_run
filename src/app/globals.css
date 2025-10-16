@@ -257,3 +257,37 @@ body {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* Form Input Text Visibility Fixes - Ensure text is always visible */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="date"],
+input[type="time"],
+textarea,
+select {
+  color: #111827 !important; /* gray-900 - dark text for light backgrounds */
+}
+
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder,
+input[type="number"]::placeholder,
+input[type="tel"]::placeholder,
+textarea::placeholder {
+  color: #9ca3af !important; /* gray-400 - lighter placeholder text */
+  opacity: 1;
+}
+
+/* Dark background inputs (auth forms with dark backgrounds) */
+input.bg-gray-700,
+input[class*="bg-gray-7"] {
+  color: #ffffff !important; /* white text on dark backgrounds */
+}
+
+input.bg-gray-700::placeholder,
+input[class*="bg-gray-7"]::placeholder {
+  color: #d1d5db !important; /* gray-300 - light placeholder on dark */
+}
