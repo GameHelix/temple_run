@@ -225,26 +225,13 @@ export default function ScreenshotsPage() {
                           className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow"
                         >
                           {/* Screenshot Image */}
-                          <div className="relative w-full h-80 bg-gray-100 flex items-center justify-center">
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <div className="text-center">
-                                <div className="text-6xl mb-4">📸</div>
-                                <p className="text-gray-500 text-sm">
-                                  Screenshot placeholder
-                                </p>
-                                <p className="text-gray-400 text-xs mt-1">
-                                  {screenshot.path}
-                                </p>
-                              </div>
-                            </div>
-                            {/* Uncomment when screenshots are added:
+                          <div className="relative w-full h-80 bg-gray-100">
                             <Image
                               src={screenshot.path}
                               alt={screenshot.title}
                               fill
-                              className="object-cover"
+                              className="object-contain"
                             />
-                            */}
                           </div>
 
                           {/* Screenshot Info */}
@@ -266,25 +253,16 @@ export default function ScreenshotsPage() {
           })}
         </div>
 
-        {/* Instructions */}
-        <div className="mt-12 bg-blue-50 border-2 border-blue-200 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-blue-900 mb-3">
-            📝 Adding Screenshots
+        {/* Info */}
+        <div className="mt-12 bg-green-50 border-2 border-green-200 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-green-900 mb-3">
+            ✅ Screenshots Loaded Successfully
           </h3>
-          <div className="text-sm text-blue-800 space-y-2">
-            <p>To add actual screenshots to this page:</p>
-            <ol className="list-decimal list-inside space-y-1 ml-4">
-              <li>Take screenshots of each page in the application</li>
-              <li>Save them in the appropriate directory:
-                <ul className="list-disc list-inside ml-6 mt-1">
-                  <li><code className="bg-blue-100 px-2 py-1 rounded">public/screenshots/patient/</code></li>
-                  <li><code className="bg-blue-100 px-2 py-1 rounded">public/screenshots/doctor/</code></li>
-                  <li><code className="bg-blue-100 px-2 py-1 rounded">public/screenshots/admin/</code></li>
-                </ul>
-              </li>
-              <li>Name the files according to the paths specified above (e.g., <code className="bg-blue-100 px-2 py-1 rounded">dashboard.png</code>)</li>
-              <li>Uncomment the Image component in <code className="bg-blue-100 px-2 py-1 rounded">src/app/screenshots/page.tsx</code></li>
-            </ol>
+          <div className="text-sm text-green-800 space-y-2">
+            <p>All application screenshots have been automatically captured and are displayed above.</p>
+            <p className="mt-3">
+              <strong>Need to update screenshots?</strong> Run: <code className="bg-green-100 px-2 py-1 rounded">node scripts/take-screenshots.js</code>
+            </p>
           </div>
         </div>
       </div>
