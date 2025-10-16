@@ -5,6 +5,351 @@ Randevu is a doctor appointment booking platform with three user types: **Patien
 
 ---
 
+## 📊 Visual Flow Diagrams
+
+### System Architecture Overview
+
+```mermaid
+graph TB
+    subgraph Users
+        P[Patient]
+        D[Doctor]
+        A[Admin]
+    end
+
+    subgraph Frontend["Next.js Frontend"]
+        HP[Home Page]
+        DL[Doctors List]
+        DP[Doctor Profile]
+        AP[Appointments]
+        PR[Profile Pages]
+        AD[Admin Panel]
+    end
+
+    subgraph Backend["API Routes"]
+        AUTH[/api/auth]
+        DOCS[/api/doctors]
+        APPT[/api/appointments]
+        ADM[/api/admin]
+    end
+
+    subgraph Database["PostgreSQL"]
+        UT[users table]
+        DPT[doctor_profiles table]
+        APT[appointments table]
+    end
+
+    P --> HP
+    P --> DL
+    P --> DP
+    P --> AP
+    D --> PR
+    D --> AP
+    A --> AD
+
+    HP --> AUTH
+    DL --> DOCS
+    DP --> DOCS
+    AP --> APPT
+    PR --> DOCS
+    AD --> ADM
+
+    AUTH --> UT
+    DOCS --> UT
+    DOCS --> DPT
+    APPT --> APT
+    ADM --> UT
+    ADM --> DPT
+
+    style P fill:#60a5fa
+    style D fill:#34d399
+    style A fill:#a78bfa
+    style Database fill:#fbbf24
+```
+
+### Doctor Registration & Verification Flow
+
+```mermaid
+sequenceDiagram
+    participant D as Doctor
+    participant UI as Frontend
+    participant API as API Server
+    participant DB as Database
+    participant Admin as Admin Panel
+
+    Note over D,DB: Step 1: Registration
+    D->>UI: Visit /auth/signup
+    UI->>D: Show signup form
+    D->>UI: Fill details (role='doctor')
+    UI->>API: POST /api/auth/signup
+    API->>DB: INSERT INTO users
+    DB-->>API: User created
+    API-->>UI: Success + JWT token
+    UI-->>D: Redirect to /profile
+
+    Note over D,DB: Step 2: Profile Completion
+    D->>UI: Visit /profile
+    UI-->>D: Show YELLOW banner (incomplete)
+    D->>UI: Click "Complete Profile"
+    UI->>D: Show /doctor/profile-setup
+    D->>UI: Fill profile info
+    UI->>API: POST /api/doctors/profile
+    API->>DB: INSERT doctor_profile (is_verified=false)
+    DB-->>API: Profile created
+    API-->>UI: Success
+    UI-->>D: Show BLUE banner (pending)
+
+    Note over D,Admin: Step 3: Admin Verification
+    Admin->>UI: Visit /admin/doctors
+    UI->>API: GET /api/admin/doctors
+    API->>DB: SELECT unverified doctors
+    DB-->>API: Doctor list
+    API-->>UI: Return doctors
+    UI-->>Admin: Show doctor with "Profile Complete"
+    Admin->>UI: Click "Verify"
+    UI->>API: POST /api/admin/doctors/verify
+    API->>DB: UPDATE is_verified=true
+    DB-->>API: Updated
+    API-->>UI: Success
+    UI-->>Admin: Show success message
+
+    Note over D,DB: Step 4: Public Visibility
+    D->>UI: Visit /profile
+    UI-->>D: Show GREEN banner (verified)
+    D->>UI: Visit /doctors
+    UI->>API: GET /api/doctors
+    API->>DB: SELECT verified doctors
+    DB-->>API: Include this doctor
+    API-->>UI: Doctor list
+    UI-->>D: Doctor appears in public list ✓
+```
+
+### Patient Appointment Booking Flow
+
+```mermaid
+sequenceDiagram
+    participant P as Patient
+    participant UI as Frontend
+    participant API as API Server
+    participant DB as Database
+    participant D as Doctor
+
+    Note over P,DB: Step 1: Registration
+    P->>UI: Visit /auth/signup
+    UI->>API: POST /api/auth/signup (role='patient')
+    API->>DB: CREATE user
+    DB-->>API: User created
+    API-->>UI: Success + token
+    UI-->>P: Redirect to home
+
+    Note over P,DB: Step 2: Browse Doctors
+    P->>UI: Visit /doctors
+    UI->>API: GET /api/doctors?specialization&city
+    API->>DB: SELECT verified doctors
+    DB-->>API: Doctor list
+    API-->>UI: Return doctors
+    UI-->>P: Show doctor cards
+
+    Note over P,DB: Step 3: View Profile
+    P->>UI: Click doctor card
+    UI->>API: GET /api/doctors/[id]
+    API->>DB: SELECT doctor details
+    DB-->>API: Doctor profile
+    API-->>UI: Return profile
+    UI-->>P: Show profile + booking form
+
+    Note over P,DB: Step 4: Book Appointment
+    P->>UI: Select date & time
+    UI->>API: GET /api/availability?doctorId&date
+    API->>DB: Check available slots
+    DB-->>API: Available times
+    API-->>UI: Return slots
+    UI-->>P: Show time options
+    P->>UI: Fill booking form
+    UI->>API: POST /api/appointments
+    API->>DB: INSERT appointment (status='pending')
+    DB-->>API: Appointment created
+    API-->>UI: Success
+    UI-->>P: Show confirmation
+
+    Note over P,D: Step 5: Doctor Confirmation
+    D->>UI: Visit /doctor/appointments
+    UI->>API: GET /api/appointments
+    API->>DB: SELECT doctor's appointments
+    DB-->>API: Appointment list
+    API-->>UI: Return appointments
+    UI-->>D: Show pending appointment
+    D->>UI: Click "Confirm"
+    UI->>API: PATCH /api/appointments/[id]
+    API->>DB: UPDATE status='confirmed'
+    DB-->>API: Updated
+    API-->>UI: Success
+    UI-->>D: Show confirmed
+
+    P->>UI: Visit /appointments
+    UI-->>P: Show confirmed status ✓
+```
+
+### Admin Doctor Verification Process
+
+```mermaid
+flowchart TD
+    Start([Doctor Registers]) --> CheckProfile{Has Profile?}
+
+    CheckProfile -->|No| YellowBanner[🟨 Yellow Banner<br/>Profile Incomplete]
+    CheckProfile -->|Yes| CheckVerified{Is Verified?}
+
+    YellowBanner --> CompleteProfile[Doctor Completes<br/>Profile Form]
+    CompleteProfile --> SaveProfile[(Save to DB<br/>is_verified=false)]
+    SaveProfile --> BlueBanner[🟦 Blue Banner<br/>Pending Verification]
+
+    CheckVerified -->|No| BlueBanner
+    CheckVerified -->|Yes| GreenBanner[🟩 Green Banner<br/>Profile Verified]
+
+    BlueBanner --> AdminPanel[Admin Views<br/>/admin/doctors]
+    AdminPanel --> ShowStatus[Show Profile Status:<br/>✓ Profile Complete]
+    ShowStatus --> AdminReview{Admin Decision}
+
+    AdminReview -->|Verify| ClickVerify[Click Verify Button]
+    AdminReview -->|Reject| RejectDoctor[Click Reject]
+
+    ClickVerify --> UpdateDB[(UPDATE DB<br/>is_verified=true)]
+    UpdateDB --> GreenBanner
+
+    GreenBanner --> PublicList[Appears in<br/>Public Doctors List]
+    PublicList --> PatientsCanBook[Patients Can<br/>Book Appointments]
+
+    RejectDoctor --> RemoveFromList[Remove from List]
+    RemoveFromList --> NotifyDoctor[Notify Doctor]
+
+    style YellowBanner fill:#fef3c7,stroke:#f59e0b
+    style BlueBanner fill:#dbeafe,stroke:#3b82f6
+    style GreenBanner fill:#d1fae5,stroke:#10b981
+    style PublicList fill:#86efac,stroke:#16a34a
+    style PatientsCanBook fill:#86efac,stroke:#16a34a
+```
+
+### Complete User Journey Map
+
+```mermaid
+journey
+    title Doctor Journey from Registration to First Appointment
+    section Registration
+      Sign up: 5: Doctor
+      Verify email: 4: Doctor
+      Login: 5: Doctor
+    section Profile Setup
+      See incomplete warning: 3: Doctor
+      Complete profile form: 4: Doctor
+      Submit for review: 5: Doctor
+      Wait for verification: 2: Doctor
+    section Verification
+      Admin reviews profile: 5: Admin
+      Admin verifies: 5: Admin
+      Receive notification: 5: Doctor
+    section Going Live
+      Profile appears public: 5: Doctor
+      Set availability schedule: 4: Doctor
+      Receive first booking: 5: Doctor, Patient
+      Confirm appointment: 5: Doctor
+      Complete consultation: 5: Doctor, Patient
+```
+
+### Authentication & Authorization Flow
+
+```mermaid
+stateDiagram-v2
+    [*] --> Unauthenticated
+
+    Unauthenticated --> Patient: Sign up as Patient
+    Unauthenticated --> Doctor: Sign up as Doctor
+    Unauthenticated --> Admin: Admin Account Created
+
+    state Patient {
+        [*] --> BrowseDoctors
+        BrowseDoctors --> ViewProfile
+        ViewProfile --> BookAppointment
+        BookAppointment --> ManageAppointments
+        ManageAppointments --> CancelAppointment
+    }
+
+    state Doctor {
+        [*] --> IncompleteProfile
+        IncompleteProfile --> CompleteProfile
+        CompleteProfile --> PendingVerification
+        PendingVerification --> Verified
+        Verified --> SetSchedule
+        SetSchedule --> ReceiveBookings
+        ReceiveBookings --> ManagePatients
+        ManagePatients --> ConfirmAppointment
+        ConfirmAppointment --> CompleteAppointment
+    }
+
+    state Admin {
+        [*] --> Dashboard
+        Dashboard --> VerifyDoctors
+        Dashboard --> ManageUsers
+        Dashboard --> ViewStatistics
+        VerifyDoctors --> ApproveDoctor
+        VerifyDoctors --> RejectDoctor
+    }
+```
+
+### Database Entity Relationships
+
+```mermaid
+erDiagram
+    USERS ||--o{ DOCTOR_PROFILES : has
+    USERS ||--o{ APPOINTMENTS : "books/receives"
+    DOCTOR_PROFILES ||--o{ APPOINTMENTS : receives
+
+    USERS {
+        uuid id PK
+        string name
+        string email UK
+        string phone
+        enum role "patient|doctor|admin"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    DOCTOR_PROFILES {
+        uuid id PK
+        uuid user_id FK
+        string specialization
+        string license_number
+        text bio
+        string education
+        int experience_years
+        decimal consultation_fee
+        string clinic_name
+        string clinic_address
+        string city
+        boolean is_verified "default: false"
+        decimal rating "default: 0"
+        int total_reviews "default: 0"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    APPOINTMENTS {
+        uuid id PK
+        uuid patient_id FK
+        uuid doctor_id FK
+        date appointment_date
+        time appointment_time
+        int duration_minutes
+        text patient_notes
+        text doctor_notes
+        enum status "pending|confirmed|completed|cancelled|no_show"
+        string cancellation_reason
+        timestamp created_at
+        timestamp updated_at
+    }
+```
+
+---
+
 ## 🔄 Complete System Flow
 
 ```
