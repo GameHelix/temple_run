@@ -206,6 +206,13 @@ export default function ProfilePage() {
                 ) : isDoctor() ? (
                   <>
                     <div className="p-4 border border-gray-700 rounded-lg hover:bg-gray-700/40 transition cursor-pointer"
+                         onClick={() => router.push('/doctor/onboarding')}>
+                      <h3 className="text-lg font-medium text-indigo-200">Getting Started Guide</h3>
+                      <p className="mt-2 text-sm text-indigo-300">
+                        View your onboarding checklist and setup progress
+                      </p>
+                    </div>
+                    <div className="p-4 border border-gray-700 rounded-lg hover:bg-gray-700/40 transition cursor-pointer"
                          onClick={() => router.push('/doctor/appointments')}>
                       <h3 className="text-lg font-medium text-indigo-200">Manage Appointments</h3>
                       <p className="mt-2 text-sm text-indigo-300">
