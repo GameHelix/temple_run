@@ -437,17 +437,25 @@ export default function HelpPage() {
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Need More Help?</h3>
           <p className="text-gray-600 mb-4">
-            Check out our complete workflow documentation for detailed technical information
+            Check out our complete workflow documentation and visual screenshots
           </p>
-          <a
-            href="/WORKFLOW.md"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
-          >
-            <BookOpen className="h-4 w-4 mr-2" />
-            View Complete Documentation
-          </a>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <a
+              href="/WORKFLOW.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            >
+              <BookOpen className="h-4 w-4 mr-2" />
+              View Documentation
+            </a>
+            <Link
+              href="/screenshots"
+              className="inline-flex items-center justify-center bg-white text-blue-600 border-2 border-blue-600 px-6 py-2 rounded-lg hover:bg-blue-50 transition-colors font-medium"
+            >
+              📸 View Screenshots
+            </Link>
+          </div>
         </div>
       </div>
     </div>
