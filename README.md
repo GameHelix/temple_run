@@ -12,6 +12,10 @@ A modern, full-stack doctor appointment booking platform built with Next.js, Typ
 ![Login Page](./screenshots/login%20page.png)
 *User authentication interface for patients, doctors, and administrators*
 
+### Signup Page
+![Signup Page](./screenshots/signup%20page.png)
+*Registration interface for new users to create accounts*
+
 ### Patient Interface
 ![Patient Page](./screenshots/patient%20page.png)
 *Patient dashboard for browsing doctors and managing appointments*
