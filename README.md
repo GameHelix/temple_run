@@ -6,6 +6,24 @@ A modern, full-stack doctor appointment booking platform built with Next.js, Typ
 
 **Randevu solves the challenge of finding and booking doctor appointments online.** Patients can browse verified doctors by specialization and location, view available time slots, and book appointments instantly. Doctors can manage their availability and appointments through a simple dashboard.
 
+## Screenshots
+
+### Login Page
+![Login Page](./screenshots/login%20page.png)
+*User authentication interface for patients, doctors, and administrators*
+
+### Patient Interface
+![Patient Page](./screenshots/patient%20page.png)
+*Patient dashboard for browsing doctors and managing appointments*
+
+### Doctor Dashboard
+![Doctor Page](./screenshots/doctor%20page.png)
+*Doctor interface for managing availability and appointments*
+
+### Admin Panel
+![Admin Page](./screenshots/admin%20page.png)
+*Administrator dashboard for verifying doctors and overseeing the platform*
+
 ## Features
 
 ### For Patients
