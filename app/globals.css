@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+/* ── Reset ────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #060014;
+  color: #ffffff;
+  font-family: var(--font-mono, 'Courier New', monospace);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* Prevent iOS bounce scroll */
+body { overscroll-behavior: none; }
+
+/* ── Neon glow utility classes ────────────────────────────────────────────── */
+.glow-cyan   { text-shadow: 0 0 10px #00e5ff, 0 0 20px #00e5ff; }
+.glow-purple { text-shadow: 0 0 10px #aa44ff, 0 0 24px #6600ff; }
+.glow-red    { text-shadow: 0 0 10px #ff2244, 0 0 20px #ff0022; }
+
+/* ── Canvas fills its container exactly ──────────────────────────────────── */
+canvas { display: block; width: 100%; height: 100%; }
+
+/* ── Scrollbar hide (for any scrollable UI) ──────────────────────────────── */
+::-webkit-scrollbar { display: none; }
+* { scrollbar-width: none; }
