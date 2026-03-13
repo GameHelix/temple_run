@@ -9,10 +9,6 @@ import { query } from './db';
  */
 export async function createUser(userData: SignUpData): Promise<User | null> {
   try {
-    console.log('=== USER-DB CREATE USER ===');
-    console.log('Creating user with email:', userData.email);
-    console.log('Received userData.role:', userData.role, 'type:', typeof userData.role);
-
     // Check if email already exists
     const emailCheckResult = await query(
       'SELECT * FROM randevu.users WHERE email = $1',
@@ -20,23 +16,19 @@ export async function createUser(userData: SignUpData): Promise<User | null> {
     );
     
     if (emailCheckResult.rows.length > 0) {
-      console.log('Email already exists:', userData.email);
       return null; // Email already exists
     }
-    
+
     // Hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(userData.password, salt);
-    
+
     // Generate UUID for the new user
     const userId = uuidv4();
     const now = new Date();
-    
+
     // Ensure role is either 'doctor' or 'patient', default to 'patient'
     const role = userData.role === 'doctor' ? 'doctor' : 'patient';
-
-    console.log('After validation - final role to insert:', role);
-    console.log('Inserting new user with ID:', userId, 'and role:', role);
     
     // Insert the new user with role field
     const result = await query(
@@ -55,8 +47,6 @@ export async function createUser(userData: SignUpData): Promise<User | null> {
     );
     
     if (result.rows.length > 0) {
-      console.log('User created successfully:', result.rows[0].email, 'with role:', result.rows[0].role);
-      // Convert the returned row to a User object
       return {
         id: result.rows[0].id,
         name: result.rows[0].name,
@@ -67,7 +57,6 @@ export async function createUser(userData: SignUpData): Promise<User | null> {
       };
     }
     
-    console.log('User creation failed, no rows returned');
     return null;
   } catch (error) {
     console.error('Error creating user:', error);
@@ -286,8 +275,6 @@ export async function getChatHistory(userId: string, limit: number = 20): Promis
  */
 export async function createAdminUser(userData: SignUpData): Promise<User | null> {
   try {
-    console.log('Creating admin user with email:', userData.email);
-    
     // Check if email already exists
     const emailCheckResult = await query(
       'SELECT * FROM randevu.users WHERE email = $1',
@@ -295,7 +282,6 @@ export async function createAdminUser(userData: SignUpData): Promise<User | null
     );
 
     if (emailCheckResult.rows.length > 0) {
-      console.log('Email already exists:', userData.email);
       return null; // Email already exists
     }
 
@@ -309,8 +295,6 @@ export async function createAdminUser(userData: SignUpData): Promise<User | null
 
     // Force role to be admin
     const role = 'admin';
-
-    console.log('Inserting new admin user with ID:', userId);
 
     // Insert the new admin user
     const result = await query(
@@ -329,8 +313,6 @@ export async function createAdminUser(userData: SignUpData): Promise<User | null
     );
     
     if (result.rows.length > 0) {
-      console.log('Admin user created successfully:', result.rows[0].email);
-      // Convert the returned row to a User object
       return {
         id: result.rows[0].id,
         name: result.rows[0].name,
@@ -340,8 +322,7 @@ export async function createAdminUser(userData: SignUpData): Promise<User | null
         updatedAt: new Date(result.rows[0].updated_at)
       };
     }
-    
-    console.log('Admin user creation failed, no rows returned');
+
     return null;
   } catch (error) {
     console.error('Error creating admin user:', error);
@@ -379,11 +360,8 @@ export async function verifyDoctorAccount(doctorId: string, adminId: string): Pr
     const adminCheck = await isAdmin(adminId);
 
     if (!adminCheck) {
-      console.error('Non-admin user attempted to verify doctor account');
       return false;
     }
-
-    console.log('Verifying doctor with ID:', doctorId);
 
     // Update the doctor_profiles table to set is_verified = true
     const result = await query(
@@ -394,13 +372,7 @@ export async function verifyDoctorAccount(doctorId: string, adminId: string): Pr
       [doctorId]
     );
 
-    if (result.rows.length > 0) {
-      console.log('Doctor verified successfully:', doctorId);
-      return true;
-    } else {
-      console.log('Doctor profile not found for user:', doctorId);
-      return false;
-    }
+    return result.rows.length > 0;
   } catch (error) {
     console.error('Error verifying doctor account:', error);
     return false;

@@ -1,4 +1,5 @@
-// Quick script to setup database
+// scripts/setup-db.js
+// Initializes the database schema for Randevu
 require('dotenv').config();
 const { Pool } = require('pg');
 const fs = require('fs');
@@ -7,34 +8,25 @@ const path = require('path');
 async function setupDatabase() {
   if (!process.env.DATABASE_URL) {
     console.error('❌ DATABASE_URL not found in .env file');
+    console.error('   Copy .env.example to .env and fill in your database connection string.');
     process.exit(1);
   }
 
-  console.log('✅ DATABASE_URL loaded from .env');
-
-  // Parse DATABASE_URL and use it directly
-  const pool = new Pool({
-    connectionString: process.env.DATABASE_URL
-  });
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
   try {
     console.log('🔌 Connecting to database...');
     const sql = fs.readFileSync(path.join(__dirname, 'scripts.sql'), 'utf8');
 
-    console.log('📝 Executing SQL script...');
+    console.log('📝 Running schema migration...');
     await pool.query(sql);
 
-    console.log('✅ Database setup completed successfully!');
+    console.log('✅ Database setup complete!');
     console.log('');
-    console.log('Default admin account created:');
-    console.log('  Email: admin@randevu.com');
-    console.log('  Password: admin123');
-    console.log('  (Change this password after first login!)');
-    console.log('');
-    console.log('Sample doctors created:');
-    console.log('  - Dr. Sarah Johnson (Cardiology)');
-    console.log('  - Dr. Michael Chen (Pediatrics)');
-
+    console.log('Next steps:');
+    console.log('  1. Sign in at /auth/signin with the default admin account (see docs/DATABASE.md)');
+    console.log('  2. Change the admin password immediately');
+    console.log('  3. Start the dev server: npm run dev');
   } catch (error) {
     console.error('❌ Database setup failed:', error.message);
     process.exit(1);
